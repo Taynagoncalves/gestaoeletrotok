@@ -39,7 +39,7 @@ const ICONES = {
 
 function svgIcone(nome) {
   const paths = (ICONES[nome] || []).map((d) => `<path d="${d}"/>`).join('');
-  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+  return `<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
 }
 
 const MENU_ITENS = [
@@ -112,11 +112,15 @@ function empresaAtualStorage() {
 async function renderTopbar() {
   document.getElementById('app-topbar').innerHTML = `
     <div class="topbar-busca">
-      ${svgIcone('search')}
+      <span class="topbar-busca-icone">${svgIcone('search')}</span>
       <input type="text" placeholder="Buscar no sistema..." />
     </div>
     <div class="topbar-empresa">
-      <select id="topbar-select-empresa"></select>
+      <span class="topbar-empresa-icone">${svgIcone('building')}</span>
+      <div class="topbar-empresa-info">
+        <select id="topbar-select-empresa"></select>
+        <small id="topbar-empresa-cnpj"></small>
+      </div>
     </div>
     <div class="topbar-toggle">
       <button type="button" id="btn-modo-loja" class="ativo">Apenas esta loja</button>
@@ -124,19 +128,19 @@ async function renderTopbar() {
     </div>
     <button type="button" class="topbar-icone-btn" title="Notificações">
       ${svgIcone('bell')}
-      <span class="topbar-badge">3</span>
     </button>
     <div class="topbar-usuario">
-      <div class="topbar-usuario-avatar">T</div>
+      <div class="topbar-usuario-avatar">${svgIcone('user')}</div>
       <div>
-        <div>Tayna</div>
-        <small>Administrador</small>
+        <div>Usuário</div>
+        <small>Login ainda não configurado</small>
       </div>
     </div>
   `;
 
   const store = empresaAtualStorage();
   const selectEmpresa = document.getElementById('topbar-select-empresa');
+  const cnpjLabel = document.getElementById('topbar-empresa-cnpj');
   const btnLoja = document.getElementById('btn-modo-loja');
   const btnTodas = document.getElementById('btn-modo-todas');
 
@@ -147,14 +151,23 @@ async function renderTopbar() {
     empresas = [];
   }
 
-  selectEmpresa.innerHTML = empresas.map((e) => `<option value="${e.id}">${e.razao_social} (${e.tipo})</option>`).join('');
+  if (empresas.length === 0) {
+    selectEmpresa.innerHTML = '<option value="">Nenhuma empresa cadastrada</option>';
+    cnpjLabel.textContent = '';
+  } else {
+    selectEmpresa.innerHTML = empresas.map((e) => `<option value="${e.id}">${e.razao_social} (${e.tipo})</option>`).join('');
 
-  if (empresas.length > 0) {
     const idSalvo = store.id;
     const existe = empresas.some((e) => String(e.id) === String(idSalvo));
     selectEmpresa.value = existe ? idSalvo : empresas[0].id;
     if (!existe) store.id = selectEmpresa.value;
   }
+
+  function atualizarCnpjLabel() {
+    const empresa = empresas.find((e) => String(e.id) === String(selectEmpresa.value));
+    cnpjLabel.textContent = empresa ? `CNPJ: ${empresa.cnpj}` : '';
+  }
+  atualizarCnpjLabel();
 
   function atualizarModoVisual() {
     const consolidado = store.consolidado;
@@ -166,6 +179,7 @@ async function renderTopbar() {
 
   selectEmpresa.addEventListener('change', () => {
     store.id = selectEmpresa.value;
+    atualizarCnpjLabel();
     renderFaixaContexto(empresas, store);
     window.dispatchEvent(new CustomEvent('empresa-alterada'));
   });

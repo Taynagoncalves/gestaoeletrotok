@@ -210,6 +210,12 @@
   object-fit: cover;
 }
 
+.preview-imagem svg {
+  width: 64px;
+  height: 64px;
+  color: #c6cad3;
+}
+
 .toggle-status {
   display: flex;
   align-items: center;

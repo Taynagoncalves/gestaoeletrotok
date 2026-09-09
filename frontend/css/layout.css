@@ -178,6 +178,18 @@ body {
   color: var(--text-principal);
 }
 
+.topbar-busca-icone,
+.topbar-empresa-icone {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.topbar-busca svg,
+.topbar-empresa-icone svg {
+  width: 16px;
+  height: 16px;
+}
+
 .topbar-empresa {
   display: flex;
   align-items: center;
@@ -187,6 +199,15 @@ body {
   padding: 6px 12px;
 }
 
+.topbar-empresa-icone {
+  color: var(--text-secundario);
+}
+
+.topbar-empresa-info {
+  display: flex;
+  flex-direction: column;
+}
+
 .topbar-empresa select {
   border: none;
   outline: none;
@@ -194,6 +215,7 @@ body {
   font-weight: 600;
   background: none;
   max-width: 180px;
+  padding: 0;
 }
 
 .topbar-empresa small {
@@ -266,6 +288,12 @@ body {
   align-items: center;
   justify-content: center;
   font-weight: 700;
+  flex-shrink: 0;
+}
+
+.topbar-usuario-avatar svg {
+  width: 16px;
+  height: 16px;
 }
 
 .topbar-usuario small {
