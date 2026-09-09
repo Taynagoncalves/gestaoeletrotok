@@ -1,0 +1,103 @@
+.stepper-importacao {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.stepper-etapa {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secundario);
+  font-size: 13px;
+}
+
+.stepper-etapa-numero {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.stepper-etapa.ativa .stepper-etapa-numero {
+  background: var(--accent);
+  color: #fff;
+}
+
+.stepper-etapa.concluida .stepper-etapa-numero {
+  background: var(--accent-green);
+  color: #fff;
+}
+
+.stepper-etapa.ativa,
+.stepper-etapa.concluida {
+  color: var(--text-principal);
+  font-weight: 600;
+}
+
+.stepper-linha {
+  flex: 1;
+  height: 2px;
+  background: #e5e7eb;
+  margin: 0 10px;
+}
+
+.zona-upload-importacao {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 48px 20px;
+  text-align: center;
+  color: var(--text-secundario);
+  cursor: pointer;
+  background: #fafafa;
+}
+
+.zona-upload-importacao svg {
+  width: 40px;
+  height: 40px;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.tabela-mapeamento th,
+.tabela-mapeamento td {
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  text-align: left;
+}
+
+.tabela-mapeamento select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.campo-obrigatorio-tag {
+  color: #dc2626;
+  font-size: 11px;
+  margin-left: 4px;
+}
+
+.resumo-resultado {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.tabela-preview-scroll {
+  max-height: 320px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}

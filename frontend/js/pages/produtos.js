@@ -21,6 +21,7 @@ function renderizarIcones() {
   document.getElementById('icone-busca').innerHTML = svgIcone('search');
   document.getElementById('icone-limpar').innerHTML = svgIcone('refresh-cw');
   document.getElementById('icone-novo').innerHTML = svgIcone('plus');
+  document.getElementById('icone-importar').innerHTML = svgIcone('upload');
 }
 
 function formatarMoeda(valor) {

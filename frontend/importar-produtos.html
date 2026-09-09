@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Eletrotok - Importar Produtos</title>
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/produto-form.css" />
+  <link rel="stylesheet" href="css/produtos-lista.css" />
+  <link rel="stylesheet" href="css/importacao.css" />
+</head>
+<body>
+  <div id="app-sidebar"></div>
+
+  <div id="app-conteudo">
+    <div id="app-topbar"></div>
+    <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
+
+    <main id="app-main">
+      <div class="pagina-cabecalho">
+        <div class="pagina-cabecalho-titulo">
+          <div class="pagina-cabecalho-icone" id="icone-pagina"></div>
+          <div>
+            <h1>Importar Produtos</h1>
+            <p>Traga seu catálogo de outro sistema via planilha CSV ou Excel.</p>
+          </div>
+        </div>
+        <div class="breadcrumb">
+          <a href="index.html">Início</a> &gt; <a href="produtos.html">Produtos</a> &gt; <strong>Importar</strong>
+        </div>
+      </div>
+
+      <div class="stepper-importacao">
+        <div class="stepper-etapa ativa" data-etapa-indicador="1"><div class="stepper-etapa-numero">1</div><span>Enviar arquivo</span></div>
+        <div class="stepper-linha"></div>
+        <div class="stepper-etapa" data-etapa-indicador="2"><div class="stepper-etapa-numero">2</div><span>Mapear colunas</span></div>
+        <div class="stepper-linha"></div>
+        <div class="stepper-etapa" data-etapa-indicador="3"><div class="stepper-etapa-numero">3</div><span>Pré-visualizar</span></div>
+        <div class="stepper-linha"></div>
+        <div class="stepper-etapa" data-etapa-indicador="4"><div class="stepper-etapa-numero">4</div><span>Resultado</span></div>
+      </div>
+
+      <!-- ETAPA 1: UPLOAD -->
+      <div data-etapa="1">
+        <div class="painel-form">
+          <div class="zona-upload-importacao" id="zona-upload">
+            <div id="icone-upload"></div>
+            <p><strong>Clique para selecionar</strong> ou arraste um arquivo CSV ou Excel (.csv, .xlsx, .xls)</p>
+            <p style="font-size:12px;">O arquivo precisa ter uma linha de cabeçalho com o nome das colunas.</p>
+          </div>
+          <input type="file" id="campo-arquivo" accept=".csv,.xlsx,.xls" hidden />
+          <div class="mensagem" id="mensagem-upload"></div>
+        </div>
+      </div>
+
+      <!-- ETAPA 2: MAPEAMENTO -->
+      <div data-etapa="2" hidden>
+        <div class="painel-form">
+          <p class="painel-form-titulo">Configuração do lote</p>
+          <div class="grid-campos duas-colunas">
+            <label class="campo">Tipo de produto para todos os itens deste arquivo *
+              <select id="campo-tipo-padrao" required>
+                <option value="">Selecione</option>
+                <option value="acessorio">Acessório (por quantidade)</option>
+                <option value="eletronico">Eletrônico (por quantidade)</option>
+                <option value="celular">Celular (o IMEI é completado depois, por unidade)</option>
+              </select>
+            </label>
+            <label class="campo">Aplicar preço importado na empresa
+              <select id="campo-empresa-preco"><option value="">Não importar preço</option></select>
+            </label>
+          </div>
+        </div>
+
+        <div class="painel-form">
+          <p class="painel-form-titulo">Mapeamento de colunas</p>
+          <p style="font-size:12px; color:#6b7280; margin-top:-6px;">Sugerimos automaticamente, mas revise antes de continuar.</p>
+          <div style="overflow-x:auto;">
+            <table class="tabela-mapeamento">
+              <thead><tr><th>Campo do sistema</th><th>Coluna do arquivo</th></tr></thead>
+              <tbody id="tabela-mapeamento"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="barra-acoes-formulario painel-form">
+          <button type="button" class="botao secundario" id="btn-voltar-etapa2"><span id="icone-voltar-2"></span> Voltar</button>
+          <button type="button" class="botao primario" id="btn-avancar-etapa2">Pré-visualizar importação</button>
+        </div>
+        <div class="mensagem" id="mensagem-mapeamento"></div>
+      </div>
+
+      <!-- ETAPA 3: PREVIEW -->
+      <div data-etapa="3" hidden>
+        <div class="painel-form">
+          <p class="painel-form-titulo">Pré-visualização (<span id="total-linhas-preview"></span> linha(s) no arquivo)</p>
+          <p style="font-size:12px; color:#6b7280;">Mostrando as 10 primeiras linhas já convertidas para os campos do sistema.</p>
+          <div class="tabela-preview-scroll">
+            <table>
+              <thead id="cabecalho-preview"></thead>
+              <tbody id="corpo-preview"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="barra-acoes-formulario painel-form">
+          <button type="button" class="botao secundario" id="btn-voltar-etapa3"><span id="icone-voltar-3"></span> Voltar e ajustar mapeamento</button>
+          <button type="button" class="botao primario" id="btn-confirmar-importacao"><span id="icone-confirmar"></span> Confirmar e importar</button>
+        </div>
+        <div class="mensagem" id="mensagem-preview"></div>
+      </div>
+
+      <!-- ETAPA 4: RESULTADO -->
+      <div data-etapa="4" hidden>
+        <div class="painel-form">
+          <p class="painel-form-titulo">Importação concluída</p>
+          <div class="resumo-resultado">
+            <div class="card-resumo">
+              <div class="card-resumo-icone azul" id="icone-processadas"></div>
+              <div><p class="card-resumo-titulo">Linhas processadas</p><p class="card-resumo-valor" id="valor-processadas">0</p></div>
+            </div>
+            <div class="card-resumo">
+              <div class="card-resumo-icone verde" id="icone-importadas"></div>
+              <div><p class="card-resumo-titulo">Produtos importados</p><p class="card-resumo-valor" id="valor-importadas">0</p></div>
+            </div>
+            <div class="card-resumo">
+              <div class="card-resumo-icone vermelho" id="icone-puladas"></div>
+              <div><p class="card-resumo-titulo">Linhas puladas</p><p class="card-resumo-valor" id="valor-puladas">0</p></div>
+            </div>
+          </div>
+
+          <div id="bloco-erros" hidden>
+            <p class="painel-form-titulo">Linhas com problema</p>
+            <table>
+              <thead><tr><th>Linha</th><th>Motivo</th></tr></thead>
+              <tbody id="tabela-erros"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="barra-acoes-formulario painel-form">
+          <a href="importar-produtos.html" class="botao secundario">Importar outro arquivo</a>
+          <a href="produtos.html" class="botao primario">Ver produtos importados</a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/shared/api.js"></script>
+  <script src="js/shared/layout.js"></script>
+  <script src="js/pages/importar-produtos.js"></script>
+</body>
+</html>
