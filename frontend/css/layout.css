@@ -50,22 +50,12 @@ body {
   margin-bottom: 2px;
 }
 
-.sidebar-logo-texto {
-  color: #fff;
-  font-size: 20px;
-  font-weight: 800;
-  line-height: 1.1;
-}
-
-.sidebar-logo-destaque {
-  color: var(--accent-green);
-}
-
-.sidebar-logo-sub {
-  color: var(--sidebar-text);
-  font-size: 9px;
-  letter-spacing: 0.08em;
-  margin: 2px 0 0;
+.sidebar-logo-imagem {
+  display: block;
+  width: 100%;
+  max-width: 190px;
+  height: auto;
+  border-radius: 6px;
 }
 
 .sidebar-nav {

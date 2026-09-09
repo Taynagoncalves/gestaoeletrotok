@@ -81,9 +81,8 @@ function renderSidebar(chaveAtiva) {
     <div>
       <div class="sidebar-topo">
         <div class="sidebar-logo">
-          <div class="sidebar-logo-texto"><span class="sidebar-logo-destaque">E</span>letrotok</div>
+          <img src="img/logo-eletrotok.png" alt="Eletrotok" class="sidebar-logo-imagem" />
         </div>
-        <p class="sidebar-logo-sub">CELULARES E ELETRÔNICOS</p>
       </div>
       <ul class="sidebar-nav">${itens}</ul>
     </div>
