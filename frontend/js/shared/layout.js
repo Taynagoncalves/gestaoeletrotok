@@ -121,26 +121,39 @@ async function renderTopbar() {
       <span class="topbar-busca-icone">${svgIcone('search')}</span>
       <input type="text" placeholder="Buscar no sistema..." />
     </div>
-    <div class="topbar-empresa">
-      <span class="topbar-empresa-icone">${svgIcone('building')}</span>
-      <div class="topbar-empresa-info">
-        <select id="topbar-select-empresa"></select>
-        <small id="topbar-empresa-cnpj"></small>
+
+    <div class="topbar-spacer"></div>
+
+    <div class="topbar-grupo-direita">
+      <div class="topbar-empresa">
+        <span class="topbar-empresa-icone">${svgIcone('building')}</span>
+        <div class="topbar-empresa-info">
+          <select id="topbar-select-empresa"></select>
+          <small id="topbar-empresa-cnpj"></small>
+        </div>
       </div>
-    </div>
-    <div class="topbar-toggle">
-      <button type="button" id="btn-modo-loja" class="ativo">Apenas esta loja</button>
-      <button type="button" id="btn-modo-todas">Todas as lojas</button>
-    </div>
-    <button type="button" class="topbar-icone-btn" title="Notificações">
-      ${svgIcone('bell')}
-    </button>
-    <div class="topbar-usuario">
-      <div class="topbar-usuario-avatar">${svgIcone('user')}</div>
-      <div>
-        <div>Usuário</div>
-        <small>Login ainda não configurado</small>
+
+      <div class="topbar-toggle">
+        <button type="button" id="btn-modo-loja" class="ativo">Apenas esta loja</button>
+        <button type="button" id="btn-modo-todas">Todas as lojas</button>
       </div>
+
+      <div class="topbar-divisor"></div>
+
+      <button type="button" class="topbar-icone-btn" title="Notificações">
+        ${svgIcone('bell')}
+      </button>
+
+      <div class="topbar-divisor"></div>
+
+      <button type="button" class="topbar-usuario" id="btn-topbar-usuario">
+        <div class="topbar-usuario-avatar">${svgIcone('user')}</div>
+        <div class="topbar-usuario-info">
+          <div class="topbar-usuario-nome">Usuário</div>
+          <small>Login não configurado</small>
+        </div>
+        <span class="topbar-usuario-chevron">${svgIcone('chevron-down')}</span>
+      </button>
     </div>
   `;
 
