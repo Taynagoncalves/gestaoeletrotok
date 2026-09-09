@@ -27,6 +27,14 @@ const ICONES = {
   plus: ['M12 5v14', 'M5 12h14'],
   trash: ['M3 6h18', 'M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2', 'M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6', 'M10 11v6', 'M14 11v6'],
   'arrow-left': ['M19 12H5', 'M12 19l-7-7 7-7'],
+  info: ['M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z', 'M12 16v-4', 'M12 8h.01'],
+  edit: ['M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z'],
+  copy: ['M20 9H11a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2z', 'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'],
+  'refresh-cw': ['M23 4v6h-6', 'M1 20v-6h6', 'M3.51 9a9 9 0 0 1 14.85-3.36L23 10', 'M1 14l4.64 4.36A9 9 0 0 0 20.49 15'],
+  'chevron-right': ['M9 18l6-6-6-6'],
+  'check-circle': ['M22 11.08V12a10 10 0 1 1-5.93-9.14', 'M22 4 12 14.01l-3-3'],
+  'x-circle': ['M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z', 'M15 9l-6 6', 'M9 9l6 6'],
+  tag: ['M20.59 13.41 13.42 20.59a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z', 'M7 7h.01'],
 };
 
 function svgIcone(nome) {
@@ -36,8 +44,8 @@ function svgIcone(nome) {
 
 const MENU_ITENS = [
   { chave: 'dashboard', rotulo: 'Início / Dashboard', href: 'index.html', icone: 'home' },
-  { chave: 'produtos', rotulo: 'Produtos', href: 'produtos.html', icone: 'box' },
-  { chave: 'estoque', rotulo: 'Estoque', href: 'estoque.html', icone: 'archive' },
+  { chave: 'produtos', rotulo: 'Produtos', href: 'produtos.html', icone: 'box', submenu: true },
+  { chave: 'estoque', rotulo: 'Estoque', href: 'estoque.html', icone: 'archive', submenu: true },
   { chave: 'fornecedores', rotulo: 'Fornecedores', href: 'fornecedores.html', icone: 'truck' },
   { chave: 'pdv', rotulo: 'Vendas (PDV)', href: 'pdv.html', icone: 'cart' },
   { chave: 'os', rotulo: 'Ordem de Serviço', href: 'ordem-servico.html', icone: 'wrench' },
@@ -57,6 +65,7 @@ function renderSidebar(chaveAtiva) {
         <a href="${item.href}" class="${item.chave === chaveAtiva ? 'ativo' : ''}">
           ${svgIcone(item.icone)}
           <span>${item.rotulo}</span>
+          ${item.submenu ? `<span class="sidebar-nav-chevron">${svgIcone('chevron-right')}</span>` : ''}
         </a>
       </li>
     `
@@ -66,12 +75,9 @@ function renderSidebar(chaveAtiva) {
     <div>
       <div class="sidebar-topo">
         <div class="sidebar-logo">
-          <div class="sidebar-logo-icone"></div>
-          <div>
-            <div class="sidebar-logo-texto">Eletrotok</div>
-            <p class="sidebar-logo-sub">CELULARES E ELETRÔNICOS</p>
-          </div>
+          <div class="sidebar-logo-texto"><span class="sidebar-logo-destaque">E</span>letrotok</div>
         </div>
+        <p class="sidebar-logo-sub">CELULARES E ELETRÔNICOS</p>
       </div>
       <ul class="sidebar-nav">${itens}</ul>
     </div>

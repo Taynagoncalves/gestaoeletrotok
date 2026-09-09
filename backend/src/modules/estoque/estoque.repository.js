@@ -135,6 +135,22 @@ async function saldosPorEmpresa(empresaId) {
   return rows;
 }
 
+async function saldosDoProdutoPorEmpresa(produtoId) {
+  const [rows] = await db.query(
+    `SELECT e.id AS empresa_id, e.razao_social AS empresa_nome, e.tipo AS empresa_tipo,
+            CASE WHEN p.tipo = 'celular'
+              THEN (SELECT COUNT(*) FROM produto_itens pi WHERE pi.produto_id = p.id AND pi.empresa_id = e.id AND pi.status = 'em_estoque')
+              ELSE COALESCE((SELECT es.quantidade FROM estoque_saldos es WHERE es.produto_id = p.id AND es.empresa_id = e.id), 0)
+            END AS saldo
+     FROM empresas e
+     CROSS JOIN produtos p
+     WHERE p.id = ?
+     ORDER BY e.razao_social`,
+    [produtoId]
+  );
+  return rows;
+}
+
 module.exports = {
   buscarProduto,
   inserirMovimentacao,
@@ -148,4 +164,5 @@ module.exports = {
   custoMaisRecente,
   historico,
   saldosPorEmpresa,
+  saldosDoProdutoPorEmpresa,
 };

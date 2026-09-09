@@ -169,6 +169,14 @@ async function listarSaldos(empresaId) {
   return repository.saldosPorEmpresa(empresaId);
 }
 
+async function saldosDoProdutoPorEmpresa(produtoId) {
+  const produto = await repository.buscarProduto(produtoId);
+  if (!produto) {
+    throw new AppError('Produto não encontrado.', 404);
+  }
+  return repository.saldosDoProdutoPorEmpresa(produtoId);
+}
+
 module.exports = {
   registrarEntrada,
   consultarSaldo,
@@ -176,4 +184,5 @@ module.exports = {
   historico,
   listarEstoqueBaixo,
   listarSaldos,
+  saldosDoProdutoPorEmpresa,
 };

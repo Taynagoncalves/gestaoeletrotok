@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <title>Eletrotok - Produtos</title>
   <link rel="stylesheet" href="css/layout.css" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/produto-form.css" />
+  <link rel="stylesheet" href="css/produtos-lista.css" />
 </head>
 <body>
   <div id="app-sidebar"></div>
@@ -14,70 +15,104 @@
     <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
 
     <main id="app-main">
-    <section class="card">
-      <h2>Novo produto</h2>
-      <form id="form-produto">
-        <label class="campo-largo">Nome
-          <input type="text" name="nome" required />
-        </label>
-        <label>Categoria
-          <input type="text" name="categoria" />
-        </label>
-        <label>Marca
-          <input type="text" name="marca" />
-        </label>
-        <label>Tipo
-          <select name="tipo" id="campo-tipo" required>
-            <option value="">Selecione</option>
-            <option value="celular">Celular (controle por IMEI)</option>
-            <option value="acessorio">Acessório (por quantidade)</option>
-            <option value="eletronico">Eletrônico (por quantidade)</option>
-          </select>
-        </label>
-        <label>Estoque mínimo (alerta)
-          <input type="number" name="estoque_minimo" min="0" value="0" />
-        </label>
-        <label class="campo-largo">Descrição
-          <input type="text" name="descricao" />
-        </label>
-        <div class="acoes">
-          <button type="submit">Salvar</button>
-          <button type="button" class="btn-link" id="btn-cancelar-edicao" hidden>Cancelar edição</button>
+      <div class="pagina-cabecalho">
+        <div class="pagina-cabecalho-titulo">
+          <div class="pagina-cabecalho-icone" id="icone-pagina"></div>
+          <div>
+            <h1>Produtos</h1>
+            <p>Gerencie seu catálogo de produtos.</p>
+          </div>
         </div>
-        <div class="mensagem" id="mensagem-produto"></div>
-      </form>
-    </section>
+        <div class="breadcrumb">
+          <a href="index.html">Início</a> &gt; <strong>Produtos</strong> &gt; Listar
+        </div>
+      </div>
 
-    <section class="card">
-      <h2>Produtos cadastrados</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Tipo</th>
-            <th>Categoria</th>
-            <th>Estoque mínimo</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="tabela-produtos"></tbody>
-      </table>
-    </section>
+      <div class="cards-resumo">
+        <div class="card-resumo">
+          <div class="card-resumo-icone azul" id="icone-total"></div>
+          <div>
+            <p class="card-resumo-titulo">Total de produtos</p>
+            <p class="card-resumo-valor" id="valor-total">0</p>
+          </div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone verde" id="icone-ativos"></div>
+          <div>
+            <p class="card-resumo-titulo">Produtos ativos</p>
+            <p class="card-resumo-valor" id="valor-ativos">0</p>
+          </div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone vermelho" id="icone-inativos"></div>
+          <div>
+            <p class="card-resumo-titulo">Produtos inativos</p>
+            <p class="card-resumo-valor" id="valor-inativos">0</p>
+          </div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone roxo" id="icone-categorias"></div>
+          <div>
+            <p class="card-resumo-titulo">Categorias</p>
+            <p class="card-resumo-valor" id="valor-categorias">0</p>
+          </div>
+        </div>
+      </div>
 
-    <section class="card" id="secao-precos" hidden>
-      <h2>Preços por empresa — <span id="produto-selecionado-nome"></span></h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Empresa</th>
-            <th>Preço de venda (R$)</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="tabela-precos"></tbody>
-      </table>
-      <div class="mensagem" id="mensagem-precos"></div>
-    </section>
+      <div class="painel-form">
+        <div class="barra-filtros">
+          <div class="campo-busca-lista">
+            <span id="icone-busca"></span>
+            <input type="text" id="campo-busca" placeholder="Buscar por nome, código, marca, categoria..." />
+          </div>
+          <label class="campo-filtro">Categoria
+            <select id="filtro-categoria"><option value="">Todas</option></select>
+          </label>
+          <label class="campo-filtro">Marca
+            <select id="filtro-marca"><option value="">Todas</option></select>
+          </label>
+          <label class="campo-filtro">Status
+            <select id="filtro-status">
+              <option value="">Todos</option>
+              <option value="1">Ativo</option>
+              <option value="0">Inativo</option>
+            </select>
+          </label>
+          <button type="button" class="botao secundario" id="btn-limpar-filtros">
+            <span id="icone-limpar"></span> Limpar filtros
+          </button>
+          <a href="produto-form.html" class="botao primario">
+            <span id="icone-novo"></span> Novo produto
+          </a>
+        </div>
+      </div>
+
+      <div class="painel-form">
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Imagem</th>
+                <th>Código</th>
+                <th>Produto</th>
+                <th>Categoria</th>
+                <th>Marca</th>
+                <th>Preço (Varejo)</th>
+                <th>Preço (Atacado)</th>
+                <th>Estoque total</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-produtos"></tbody>
+          </table>
+        </div>
+        <div class="rodape-tabela">
+          <span id="texto-paginacao"></span>
+          <div class="paginacao" id="paginacao"></div>
+        </div>
+      </div>
     </main>
   </div>
 

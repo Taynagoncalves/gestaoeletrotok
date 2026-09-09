@@ -10,5 +10,6 @@ router.get('/saldos/baixo', asyncHandler(controller.listarEstoqueBaixo));
 router.get('/produtos/:produtoId/saldo', asyncHandler(controller.consultarSaldo));
 router.get('/produtos/:produtoId/custo-atual', asyncHandler(controller.consultarCustoAtual));
 router.get('/produtos/:produtoId/historico', asyncHandler(controller.historico));
+router.get('/produtos/:produtoId/saldo-por-empresa', asyncHandler(controller.saldosDoProdutoPorEmpresa));
 
 module.exports = router;

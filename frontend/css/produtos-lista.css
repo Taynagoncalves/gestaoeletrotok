@@ -1,0 +1,145 @@
+.card-resumo-icone.vermelho { background: #e0392c; }
+
+.barra-filtros {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.campo-busca-lista {
+  flex: 1;
+  min-width: 220px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 12px;
+}
+
+.campo-busca-lista svg {
+  width: 16px;
+  height: 16px;
+  color: var(--text-secundario);
+  flex-shrink: 0;
+}
+
+.campo-busca-lista input {
+  border: none;
+  outline: none;
+  font-size: 13px;
+  width: 100%;
+}
+
+.campo-filtro {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text-secundario);
+}
+
+.campo-filtro select {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  min-width: 130px;
+}
+
+.botao svg {
+  width: 15px;
+  height: 15px;
+}
+
+.miniatura-produto {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  background: #f0f1f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: #9ca3af;
+}
+
+.miniatura-produto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.miniatura-produto svg {
+  width: 18px;
+  height: 18px;
+}
+
+.celula-produto-nome {
+  font-weight: 600;
+}
+
+.celula-produto-sub {
+  font-size: 11px;
+  color: var(--text-secundario);
+}
+
+.acoes-tabela {
+  display: flex;
+  gap: 6px;
+}
+
+.acoes-tabela button {
+  border: none;
+  background: #f0f1f4;
+  border-radius: 6px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-principal);
+}
+
+.acoes-tabela button svg {
+  width: 15px;
+  height: 15px;
+}
+
+.acoes-tabela button.perigo {
+  color: #dc2626;
+}
+
+.rodape-tabela {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--text-secundario);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.paginacao {
+  display: flex;
+  gap: 4px;
+}
+
+.paginacao button {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 6px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.paginacao button.ativo {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}

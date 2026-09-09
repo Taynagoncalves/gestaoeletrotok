@@ -30,6 +30,11 @@ async function listarEstoqueBaixo(req, res) {
   res.json(resultado);
 }
 
+async function saldosDoProdutoPorEmpresa(req, res) {
+  const resultado = await service.saldosDoProdutoPorEmpresa(req.params.produtoId);
+  res.json(resultado);
+}
+
 module.exports = {
   registrarEntrada,
   consultarSaldo,
@@ -37,4 +42,5 @@ module.exports = {
   historico,
   listarSaldos,
   listarEstoqueBaixo,
+  saldosDoProdutoPorEmpresa,
 };

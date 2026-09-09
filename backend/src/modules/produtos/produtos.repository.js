@@ -1,7 +1,19 @@
 const db = require('../../config/database');
 
 async function listar() {
-  const [rows] = await db.query('SELECT * FROM produtos ORDER BY nome');
+  const [rows] = await db.query(
+    `SELECT p.*,
+      (SELECT tp.preco_venda FROM tabela_precos tp JOIN empresas e ON e.id = tp.empresa_id
+        WHERE tp.produto_id = p.id AND e.tipo = 'varejo' ORDER BY tp.empresa_id LIMIT 1) AS preco_varejo,
+      (SELECT tp.preco_venda FROM tabela_precos tp JOIN empresas e ON e.id = tp.empresa_id
+        WHERE tp.produto_id = p.id AND e.tipo = 'atacado' ORDER BY tp.empresa_id LIMIT 1) AS preco_atacado,
+      (CASE WHEN p.tipo = 'celular'
+        THEN (SELECT COUNT(*) FROM produto_itens pi WHERE pi.produto_id = p.id AND pi.status = 'em_estoque')
+        ELSE COALESCE((SELECT SUM(es.quantidade) FROM estoque_saldos es WHERE es.produto_id = p.id), 0)
+      END) AS estoque_total
+    FROM produtos p
+    ORDER BY p.nome`
+  );
   return rows;
 }
 
