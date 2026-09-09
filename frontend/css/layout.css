@@ -270,6 +270,25 @@ body {
   padding: 10px 16px;
   font-size: 13px;
   color: #92400e;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.faixa-contexto-icone {
+  display: inline-flex;
+}
+
+.faixa-contexto-icone svg {
+  width: 15px;
+  height: 15px;
+}
+
+.aviso-em-construcao svg {
+  width: 32px;
+  height: 32px;
+  color: var(--text-secundario);
+  margin-bottom: 8px;
 }
 
 #app-main {
@@ -486,7 +505,15 @@ body {
   cursor: pointer;
   text-align: left;
   text-decoration: none;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.acao-rapida svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
 .acao-rapida.verde { background: var(--accent-green); }

@@ -23,7 +23,7 @@
 
       <div class="cards-resumo">
         <div class="card-resumo">
-          <div class="card-resumo-icone verde">🛒</div>
+          <div class="card-resumo-icone verde" id="icone-card-vendas"></div>
           <div>
             <p class="card-resumo-titulo">Vendas do dia</p>
             <p class="card-resumo-valor" id="valor-vendas-dia">R$ 0,00</p>
@@ -31,14 +31,14 @@
           </div>
         </div>
         <div class="card-resumo">
-          <div class="card-resumo-icone azul">👥</div>
+          <div class="card-resumo-icone azul" id="icone-card-clientes"></div>
           <div>
             <p class="card-resumo-titulo">Clientes atendidos hoje</p>
             <p class="card-resumo-valor" id="valor-clientes-dia">0</p>
           </div>
         </div>
         <div class="card-resumo">
-          <div class="card-resumo-icone laranja">📦</div>
+          <div class="card-resumo-icone laranja" id="icone-card-estoque"></div>
           <div>
             <p class="card-resumo-titulo">Produtos em estoque baixo</p>
             <p class="card-resumo-valor" id="valor-estoque-baixo">0</p>
@@ -46,7 +46,7 @@
           </div>
         </div>
         <div class="card-resumo">
-          <div class="card-resumo-icone roxo">🔧</div>
+          <div class="card-resumo-icone roxo" id="icone-card-os"></div>
           <div>
             <p class="card-resumo-titulo">Ordens de serviço</p>
             <p class="card-resumo-valor">Em breve</p>
@@ -96,13 +96,7 @@
         <div class="painel-cabecalho">
           <h2>Ações rápidas</h2>
         </div>
-        <div class="acoes-rapidas">
-          <a class="acao-rapida verde" href="pdv.html">🛒 Nova Venda (PDV)</a>
-          <a class="acao-rapida azul" href="ordem-servico.html">🔧 Abrir Ordem de Serviço</a>
-          <a class="acao-rapida roxo" href="notas-fiscais.html">📄 Emitir Nota Fiscal</a>
-          <a class="acao-rapida laranja" href="produtos.html">📦 Cadastrar Produto</a>
-          <a class="acao-rapida cinza" href="relatorios.html">📊 Ver Relatórios</a>
-        </div>
+        <div class="acoes-rapidas" id="acoes-rapidas"></div>
       </div>
     </main>
   </div>

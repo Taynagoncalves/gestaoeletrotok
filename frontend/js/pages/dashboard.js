@@ -2,6 +2,21 @@ function formatarMoeda(valor) {
   return Number(valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
+function renderizarIconesEAcoes() {
+  document.getElementById('icone-card-vendas').innerHTML = svgIcone('cart');
+  document.getElementById('icone-card-clientes').innerHTML = svgIcone('users');
+  document.getElementById('icone-card-estoque').innerHTML = svgIcone('archive');
+  document.getElementById('icone-card-os').innerHTML = svgIcone('wrench');
+
+  document.getElementById('acoes-rapidas').innerHTML = `
+    <a class="acao-rapida verde" href="pdv.html">${svgIcone('cart')} Nova Venda (PDV)</a>
+    <a class="acao-rapida azul" href="ordem-servico.html">${svgIcone('wrench')} Abrir Ordem de Serviço</a>
+    <a class="acao-rapida roxo" href="notas-fiscais.html">${svgIcone('file-text')} Emitir Nota Fiscal</a>
+    <a class="acao-rapida laranja" href="produtos.html">${svgIcone('box')} Cadastrar Produto</a>
+    <a class="acao-rapida cinza" href="relatorios.html">${svgIcone('bar-chart')} Ver Relatórios</a>
+  `;
+}
+
 function atualizarSaudacaoEHora() {
   const hora = new Date();
   document.getElementById('saudacao').textContent = 'Olá, Tayna!';
@@ -137,6 +152,7 @@ async function carregarDashboard() {
 
 async function iniciar() {
   atualizarSaudacaoEHora();
+  renderizarIconesEAcoes();
   await initLayout('dashboard');
   await carregarDashboard();
   window.addEventListener('empresa-alterada', carregarDashboard);

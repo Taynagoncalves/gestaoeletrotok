@@ -18,6 +18,15 @@ const ICONES = {
   search: ['M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z', 'M21 21l-4.35-4.35'],
   bell: ['M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9z', 'M13.73 21a2 2 0 0 1-3.46 0'],
   headset: ['M3 18v-6a9 9 0 0 1 18 0v6', 'M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z', 'M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z'],
+  'alert-triangle': ['M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z', 'M12 9v4', 'M12 17h.01'],
+  camera: ['M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z', 'M12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z'],
+  toggle: ['M17 4H7a8 8 0 0 0 0 16h10a8 8 0 0 0 0-16z', 'M17 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z'],
+  barcode: ['M3 4v16', 'M7 4v16', 'M11 4v16', 'M14 4v16', 'M18 4v16', 'M21 4v16'],
+  upload: ['M12 16V4', 'M7 9l5-5 5 5', 'M4 20h16'],
+  save: ['M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z', 'M17 21v-8H7v8', 'M7 3v5h8'],
+  plus: ['M12 5v14', 'M5 12h14'],
+  trash: ['M3 6h18', 'M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2', 'M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6', 'M10 11v6', 'M14 11v6'],
+  'arrow-left': ['M19 12H5', 'M12 19l-7-7 7-7'],
 };
 
 function svgIcone(nome) {
@@ -174,8 +183,10 @@ function renderFaixaContexto(empresas, store) {
   const faixa = document.getElementById('app-faixa-contexto');
   if (!faixa) return;
 
+  const iconeBox = `<span class="faixa-contexto-icone">${svgIcone('box')}</span>`;
+
   if (store.consolidado) {
-    faixa.innerHTML = '📦 Exibindo dados de <strong>todas as lojas</strong> (consolidado).';
+    faixa.innerHTML = `${iconeBox} Exibindo dados de <strong>todas as lojas</strong> (consolidado).`;
     faixa.hidden = false;
     return;
   }
@@ -186,7 +197,7 @@ function renderFaixaContexto(empresas, store) {
     return;
   }
 
-  faixa.innerHTML = `📦 Exibindo dados da loja: <strong>${empresa.razao_social}</strong> | CNPJ: ${empresa.cnpj} | Altere a loja ou veja todas no topo da página.`;
+  faixa.innerHTML = `${iconeBox} Exibindo dados da loja: <strong>${empresa.razao_social}</strong> | CNPJ: ${empresa.cnpj} | Altere a loja ou veja todas no topo da página.`;
   faixa.hidden = false;
 }
 

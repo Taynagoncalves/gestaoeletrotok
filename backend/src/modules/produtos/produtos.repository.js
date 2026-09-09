@@ -6,30 +6,105 @@ async function listar() {
 }
 
 async function buscarPorId(id) {
-  const [rows] = await db.query('SELECT * FROM produtos WHERE id = ?', [id]);
+  const [rows] = await db.query(
+    `SELECT p.*, f.razao_social AS fornecedor_padrao_nome
+     FROM produtos p
+     LEFT JOIN fornecedores f ON f.id = p.fornecedor_padrao_id
+     WHERE p.id = ?`,
+    [id]
+  );
   return rows[0] || null;
 }
 
 async function criar(dados) {
-  const { nome, categoria, marca, tipo, descricao, estoque_minimo } = dados;
+  const {
+    nome,
+    categoria,
+    subcategoria,
+    marca,
+    modelo,
+    referencia_interna,
+    codigo_ean,
+    tipo,
+    descricao,
+    imagem_base64,
+    estoque_minimo,
+    peso_kg,
+    unidade_medida,
+    fornecedor_padrao_id,
+    codigo_fornecedor,
+  } = dados;
 
   const [result] = await db.query(
-    `INSERT INTO produtos (nome, categoria, marca, tipo, descricao, estoque_minimo)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-    [nome, categoria || null, marca || null, tipo, descricao || null, estoque_minimo || 0]
+    `INSERT INTO produtos
+      (nome, categoria, subcategoria, marca, modelo, referencia_interna, codigo_ean, tipo,
+       descricao, imagem_base64, estoque_minimo, peso_kg, unidade_medida, fornecedor_padrao_id, codigo_fornecedor)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      nome,
+      categoria || null,
+      subcategoria || null,
+      marca || null,
+      modelo || null,
+      referencia_interna || null,
+      codigo_ean || null,
+      tipo,
+      descricao || null,
+      imagem_base64 || null,
+      estoque_minimo || 0,
+      peso_kg || null,
+      unidade_medida || 'UN',
+      fornecedor_padrao_id || null,
+      codigo_fornecedor || null,
+    ]
   );
 
   return buscarPorId(result.insertId);
 }
 
 async function atualizar(id, dados) {
-  const { nome, categoria, marca, descricao, estoque_minimo, ativo } = dados;
+  const {
+    nome,
+    categoria,
+    subcategoria,
+    marca,
+    modelo,
+    referencia_interna,
+    codigo_ean,
+    descricao,
+    imagem_base64,
+    estoque_minimo,
+    peso_kg,
+    unidade_medida,
+    fornecedor_padrao_id,
+    codigo_fornecedor,
+    ativo,
+  } = dados;
 
   await db.query(
     `UPDATE produtos SET
-      nome = ?, categoria = ?, marca = ?, descricao = ?, estoque_minimo = ?, ativo = ?
+      nome = ?, categoria = ?, subcategoria = ?, marca = ?, modelo = ?, referencia_interna = ?,
+      codigo_ean = ?, descricao = ?, imagem_base64 = ?, estoque_minimo = ?, peso_kg = ?,
+      unidade_medida = ?, fornecedor_padrao_id = ?, codigo_fornecedor = ?, ativo = ?
      WHERE id = ?`,
-    [nome, categoria || null, marca || null, descricao || null, estoque_minimo || 0, ativo ?? 1, id]
+    [
+      nome,
+      categoria || null,
+      subcategoria || null,
+      marca || null,
+      modelo || null,
+      referencia_interna || null,
+      codigo_ean || null,
+      descricao || null,
+      imagem_base64 || null,
+      estoque_minimo || 0,
+      peso_kg || null,
+      unidade_medida || 'UN',
+      fornecedor_padrao_id || null,
+      codigo_fornecedor || null,
+      ativo ?? 1,
+      id,
+    ]
   );
 
   return buscarPorId(id);
