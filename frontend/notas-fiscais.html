@@ -19,56 +19,65 @@
           <div class="pagina-cabecalho-icone" id="icone-pagina"></div>
           <div>
             <h1>Notas Fiscais</h1>
-            <p>Emissão via provedor terceirizado (Focus NFe / PlugNotas).</p>
+            <p>Emita, consulte e gerencie suas notas fiscais.</p>
           </div>
         </div>
-        <a href="configuracoes.html" class="botao secundario"><span id="icone-config"></span> Configuração fiscal</a>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="breadcrumb">
+            <a href="index.html">Início</a> &gt; <strong>Notas Fiscais</strong> &gt; Listar
+          </div>
+          <a href="configuracoes.html" class="botao secundario"><span id="icone-config"></span> Configurações Fiscais</a>
+          <a href="nota-fiscal-form.html" class="botao primario"><span id="icone-nova"></span> Emitir Nota Fiscal</a>
+        </div>
       </div>
 
       <div class="cards-resumo">
         <div class="card-resumo">
-          <div class="card-resumo-icone azul" id="icone-total"></div>
-          <div><p class="card-resumo-titulo">Total de notas</p><p class="card-resumo-valor" id="valor-total">0</p></div>
+          <div class="card-resumo-icone verde" id="icone-total"></div>
+          <div class="card-resumo-corpo"><p class="card-resumo-titulo">Notas emitidas</p><p class="card-resumo-valor" id="valor-total">0</p><span class="card-resumo-comparativo">No período</span></div>
         </div>
         <div class="card-resumo">
-          <div class="card-resumo-icone verde" id="icone-autorizadas"></div>
-          <div><p class="card-resumo-titulo">Autorizadas</p><p class="card-resumo-valor" id="valor-autorizadas">0</p></div>
+          <div class="card-resumo-icone azul" id="icone-valor"></div>
+          <div class="card-resumo-corpo"><p class="card-resumo-titulo">Valor total</p><p class="card-resumo-valor" id="valor-total-rs">R$ 0,00</p><span class="card-resumo-comparativo">No período</span></div>
         </div>
         <div class="card-resumo">
-          <div class="card-resumo-icone laranja" id="icone-pendentes"></div>
-          <div><p class="card-resumo-titulo">Pendentes</p><p class="card-resumo-valor" id="valor-pendentes">0</p></div>
+          <div class="card-resumo-icone laranja" id="icone-nfce"></div>
+          <div class="card-resumo-corpo"><p class="card-resumo-titulo">NFC-e (Varejo)</p><p class="card-resumo-valor" id="valor-nfce">0</p><span class="card-resumo-comparativo">No período</span></div>
         </div>
         <div class="card-resumo">
-          <div class="card-resumo-icone vermelho" id="icone-erro"></div>
-          <div><p class="card-resumo-titulo">Com erro / rejeitadas</p><p class="card-resumo-valor" id="valor-erro">0</p></div>
+          <div class="card-resumo-icone roxo" id="icone-nfe"></div>
+          <div class="card-resumo-corpo"><p class="card-resumo-titulo">NF-e (Atacado)</p><p class="card-resumo-valor" id="valor-nfe">0</p><span class="card-resumo-comparativo">No período</span></div>
         </div>
       </div>
 
       <div class="painel-form">
         <div class="barra-filtros">
-          <label class="campo-filtro">Status
-            <select id="filtro-status">
+          <div class="campo-busca-lista">
+            <span id="icone-busca"></span>
+            <input type="text" id="campo-busca" placeholder="Buscar por número, cliente, produto..." />
+          </div>
+          <label class="campo-filtro">Tipo de Nota
+            <select id="filtro-tipo">
               <option value="">Todos</option>
-              <option value="pendente">Pendente</option>
+              <option value="nfce">NFC-e</option>
+              <option value="nfe55">NF-e</option>
+            </select>
+          </label>
+          <label class="campo-filtro">Situação
+            <select id="filtro-status">
+              <option value="">Todas</option>
               <option value="autorizada">Autorizada</option>
+              <option value="pendente">Em processamento</option>
               <option value="rejeitada">Rejeitada</option>
               <option value="cancelada">Cancelada</option>
               <option value="erro">Erro</option>
             </select>
           </label>
-          <label class="campo-filtro">Tipo
-            <select id="filtro-tipo">
-              <option value="">Todos</option>
-              <option value="nfce">NFC-e</option>
-              <option value="nfe55">NFe 55</option>
-            </select>
+          <label class="campo-filtro">De
+            <input type="date" id="campo-de" />
           </label>
-          <label class="campo-filtro">Origem
-            <select id="filtro-origem">
-              <option value="">Todas</option>
-              <option value="venda">Venda</option>
-              <option value="os">Ordem de Serviço</option>
-            </select>
+          <label class="campo-filtro">Até
+            <input type="date" id="campo-ate" />
           </label>
           <button type="button" class="botao secundario" id="btn-limpar-filtros"><span id="icone-limpar"></span> Limpar</button>
         </div>
@@ -78,10 +87,14 @@
         <div style="overflow-x:auto;">
           <table>
             <thead>
-              <tr><th>Nº nota</th><th>Origem</th><th>Tipo</th><th>Status</th><th>Chave de acesso</th><th>Emitida em</th><th>Ações</th></tr>
+              <tr><th>Nº da Nota</th><th>Data e Hora</th><th>Tipo</th><th>Cliente</th><th>CNPJ / CPF</th><th>Valor Total</th><th>Situação</th><th>Ações</th></tr>
             </thead>
             <tbody id="tabela-notas"></tbody>
           </table>
+        </div>
+        <div class="rodape-tabela">
+          <span id="texto-paginacao"></span>
+          <div class="paginacao" id="paginacao"></div>
         </div>
       </div>
     </main>

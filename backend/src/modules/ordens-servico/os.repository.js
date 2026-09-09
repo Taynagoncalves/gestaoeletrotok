@@ -211,6 +211,14 @@ async function buscarOrcamentoPorId(orcamentoId) {
   return rows[0] || null;
 }
 
+async function buscarOrcamentoAprovadoPorOs(osId) {
+  const [rows] = await db.query(
+    `SELECT * FROM os_orcamentos WHERE os_id = ? AND status = 'aprovado' ORDER BY data_resposta DESC LIMIT 1`,
+    [osId]
+  );
+  return rows[0] || null;
+}
+
 async function listarItensOrcamento(orcamentoId) {
   const [rows] = await db.query('SELECT * FROM os_orcamento_itens WHERE orcamento_id = ?', [orcamentoId]);
   return rows;
@@ -253,6 +261,7 @@ module.exports = {
   inserirOrcamento,
   inserirOrcamentoItem,
   buscarOrcamentoPorId,
+  buscarOrcamentoAprovadoPorOs,
   listarItensOrcamento,
   atualizarStatusOrcamento,
   inserirEntrega,

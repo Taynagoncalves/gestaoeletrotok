@@ -35,16 +35,31 @@ async function listar(req, res) {
     status: req.query.status,
     tipo: req.query.tipo,
     origem: req.query.origem,
+    de: req.query.de,
+    ate: req.query.ate,
+    busca: req.query.busca,
   });
   res.json(notas);
 }
 
+async function emitirAvulsa(req, res) {
+  const nota = await service.emitirAvulsa(req.body);
+  res.status(201).json(nota);
+}
+
+async function resumoPeriodo(req, res) {
+  const resumo = await service.resumoPeriodo(req.query.empresa_id, req.query.de, req.query.ate);
+  res.json(resumo);
+}
+
 module.exports = {
   emitir,
+  emitirAvulsa,
   reemitir,
   consultarStatus,
   cancelar,
   buscarPorId,
   listarPorOrigem,
   listar,
+  resumoPeriodo,
 };

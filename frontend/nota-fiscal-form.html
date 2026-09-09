@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Eletrotok - Emitir Nota Fiscal</title>
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/produto-form.css" />
+  <link rel="stylesheet" href="css/entrada-estoque.css" />
+  <link rel="stylesheet" href="css/pdv.css" />
+</head>
+<body>
+  <div id="app-sidebar"></div>
+  <div id="app-conteudo">
+    <div id="app-topbar"></div>
+    <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
+    <main id="app-main">
+      <div class="pagina-cabecalho">
+        <div class="pagina-cabecalho-titulo">
+          <div class="pagina-cabecalho-icone" id="icone-pagina"></div>
+          <div>
+            <h1>Emitir Nota Fiscal</h1>
+            <p>Preencha os dados, revise as informações e emita a nota fiscal.</p>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="breadcrumb">
+            <a href="index.html">Início</a> &gt; <a href="notas-fiscais.html">Notas Fiscais</a> &gt; <strong>Emitir Nota Fiscal</strong>
+          </div>
+          <a href="configuracoes.html" class="botao secundario"><span id="icone-config"></span> Configurações Fiscais</a>
+        </div>
+      </div>
+
+      <div class="pdv-toggle-canal" style="display:inline-flex; margin-bottom:16px;">
+        <button type="button" id="btn-tipo-nfce" class="ativo" style="padding:12px 20px;">NFC-e (Varejo)<br><small style="font-weight:400;">Consumidor final</small></button>
+        <button type="button" id="btn-tipo-nfe" style="padding:12px 20px;">NF-e (Atacado)<br><small style="font-weight:400;">Pessoa jurídica</small></button>
+      </div>
+
+      <div class="layout-formulario">
+        <div>
+          <div class="painel-form">
+            <p class="painel-form-titulo"><span id="icone-cliente"></span> Dados do Cliente</p>
+            <div class="grid-campos">
+              <label class="campo">Tipo de cliente
+                <select id="campo-tipo-pessoa">
+                  <option value="fisica">Pessoa Física</option>
+                  <option value="juridica">Pessoa Jurídica</option>
+                </select>
+              </label>
+              <label class="campo">CPF/CNPJ (opcional)
+                <input type="text" id="campo-cpf-cnpj" placeholder="000.000.000-00" />
+              </label>
+              <label class="campo largo">Nome completo *
+                <input type="text" id="campo-nome-cliente" placeholder="Digite o nome completo..." required />
+              </label>
+            </div>
+            <div id="resultado-busca-cliente" class="lista-sugestoes" hidden></div>
+          </div>
+
+          <div class="painel-form">
+            <p class="painel-form-titulo"><span id="icone-produtos"></span> Produtos da Nota</p>
+            <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
+              <label class="campo" style="flex:1; min-width:220px;">Buscar produto
+                <input type="text" id="campo-buscar-produto" placeholder="Digite o nome, código ou SKU..." autocomplete="off" />
+              </label>
+              <button type="button" class="botao primario" id="btn-adicionar-item"><span id="icone-adicionar"></span> Adicionar Item</button>
+              <button type="button" class="botao secundario" id="btn-importar-pdv"><span id="icone-importar"></span> Importar do PDV</button>
+            </div>
+            <div id="resultado-busca-produto" class="lista-sugestoes" hidden></div>
+
+            <table style="margin-top:14px;">
+              <thead><tr><th>Produto</th><th>Código</th><th>Quantidade</th><th>Valor Unitário</th><th>Subtotal</th><th>Ações</th></tr></thead>
+              <tbody id="tabela-itens-nota"></tbody>
+            </table>
+            <div class="mensagem" id="mensagem-produtos"></div>
+          </div>
+
+          <div class="painel-form">
+            <p class="painel-form-titulo"><span id="icone-info"></span> Informações Adicionais <span style="font-weight:400; color:var(--text-secundario); font-size:11px;">(opcional)</span></p>
+            <div class="grid-campos duas-colunas">
+              <label class="campo largo">Observações na nota
+                <textarea id="campo-observacoes" maxlength="500" placeholder="Ex.: Garantia de 3 meses. Obrigado pela preferência!"></textarea>
+              </label>
+            </div>
+            <div class="contador-caracteres"><span id="contador-observacoes">0</span>/500</div>
+            <div class="grid-campos duas-colunas" style="margin-top:10px;">
+              <label class="campo">Vendedor (opcional)
+                <select id="campo-vendedor"><option value="">Selecione o vendedor</option></select>
+              </label>
+              <label class="campo" style="justify-content:center;">
+                <span style="margin-bottom:6px;">Enviar a nota por e-mail para o cliente</span>
+                <label class="interruptor">
+                  <input type="checkbox" id="campo-enviar-email" />
+                  <span class="interruptor-trilho"></span>
+                </label>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="painel-form">
+            <p class="painel-form-titulo"><span id="icone-resumo"></span> Resumo da Nota</p>
+            <div class="pdv-resumo-linha"><span>Subtotal (<span id="contador-itens">0</span> itens)</span><span id="valor-subtotal">R$ 0,00</span></div>
+            <div class="pdv-resumo-linha"><span>Desconto</span><input type="number" id="campo-desconto" min="0" step="0.01" value="0" style="width:90px; text-align:right; border:1px solid var(--border); border-radius:6px; padding:4px 8px;" /></div>
+            <div class="pdv-resumo-linha"><span>Acréscimo</span><input type="number" id="campo-acrescimo" min="0" step="0.01" value="0" style="width:90px; text-align:right; border:1px solid var(--border); border-radius:6px; padding:4px 8px;" /></div>
+            <div class="pdv-resumo-linha total"><span>Total da Nota</span><span id="valor-total" style="color:var(--accent-green);">R$ 0,00</span></div>
+          </div>
+
+          <div class="painel-form">
+            <p class="painel-form-titulo"><span id="icone-pagamento"></span> Forma de Pagamento</p>
+            <div id="lista-formas-pagamento" style="display:flex; flex-direction:column; gap:10px;"></div>
+          </div>
+
+          <div class="painel-form">
+            <p class="painel-form-titulo"><span id="icone-emissao"></span> Emissão</p>
+            <div class="grid-campos duas-colunas">
+              <label class="campo">Série
+                <input type="text" id="campo-serie" value="1" />
+              </label>
+              <label class="campo">Natureza da Operação
+                <select id="campo-natureza">
+                  <option value="Venda de mercadoria">Venda de mercadoria</option>
+                  <option value="Prestação de serviço">Prestação de serviço</option>
+                  <option value="Devolução">Devolução</option>
+                  <option value="Transferência">Transferência</option>
+                </select>
+              </label>
+            </div>
+            <div style="margin-top:12px; display:flex; flex-direction:column; gap:8px;">
+              <label class="checkbox-item"><input type="checkbox" id="campo-imprimir-danfe" checked /> Imprimir DANFE após a emissão</label>
+              <label class="checkbox-item"><input type="checkbox" id="campo-gerar-xml" checked /> Gerar XML da nota</label>
+              <label class="checkbox-item"><input type="checkbox" id="campo-whatsapp" /> Enviar para o cliente por WhatsApp</label>
+            </div>
+          </div>
+
+          <button type="button" class="botao primario" id="btn-emitir" style="width:100%; justify-content:center; padding:14px; font-size:14px;">
+            <span id="icone-emitir"></span> Emitir Nota Fiscal
+          </button>
+          <div class="mensagem" id="mensagem-emissao" style="margin-top:8px;"></div>
+        </div>
+      </div>
+
+      <div class="barra-acoes-formulario painel-form">
+        <a href="notas-fiscais.html" class="botao secundario"><span id="icone-voltar"></span> Voltar</a>
+        <span id="texto-cnpj-emitente" style="font-size:12px; color:var(--text-secundario); margin-left:auto;"></span>
+      </div>
+    </main>
+  </div>
+
+  <div class="overlay-modal" id="modal-importar-pdv" hidden>
+    <div class="modal-caixa">
+      <h3>Importar do PDV</h3>
+      <p style="font-size:12px; color:var(--text-secundario);">Selecione uma venda concluída para trazer os itens e o cliente automaticamente.</p>
+      <div id="lista-vendas-importar" style="max-height:320px; overflow-y:auto;"></div>
+      <button type="button" class="botao secundario" id="btn-fechar-modal-pdv" style="width:100%; justify-content:center; margin-top:12px;">Fechar</button>
+    </div>
+  </div>
+
+  <script src="js/shared/api.js"></script>
+  <script src="js/shared/layout.js"></script>
+  <script src="js/pages/nota-fiscal-form.js"></script>
+</body>
+</html>
