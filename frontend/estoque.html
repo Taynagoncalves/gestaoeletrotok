@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <title>Eletrotok - Estoque</title>
   <link rel="stylesheet" href="css/layout.css" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/produto-form.css" />
+  <link rel="stylesheet" href="css/produtos-lista.css" />
 </head>
 <body>
   <div id="app-sidebar"></div>
@@ -14,93 +15,112 @@
     <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
 
     <main id="app-main">
-    <section class="card">
-      <h2>Contexto</h2>
-      <form id="form-contexto" onsubmit="return false">
-        <label>Empresa
-          <select id="select-empresa" required></select>
-        </label>
-        <label>Produto
-          <select id="select-produto" required></select>
-        </label>
-      </form>
-      <div id="resumo-saldo" class="mensagem"></div>
-    </section>
-
-    <section class="card">
-      <h2>Registrar entrada de estoque</h2>
-      <form id="form-entrada">
-        <label>Motivo
-          <select name="motivo" id="campo-motivo" required>
-            <option value="compra">Compra de fornecedor</option>
-            <option value="transferencia">Transferência entre empresas (Eletrotok)</option>
-            <option value="ajuste">Ajuste de estoque</option>
-          </select>
-        </label>
-
-        <label id="campo-fornecedor-wrapper">Fornecedor
-          <select name="fornecedor_id" id="campo-fornecedor"></select>
-        </label>
-
-        <label id="campo-empresa-origem-wrapper" hidden>Empresa de origem
-          <select name="empresa_origem_id" id="campo-empresa-origem"></select>
-        </label>
-
-        <label id="campo-quantidade-wrapper">Quantidade
-          <input type="number" name="quantidade" id="campo-quantidade" min="1" />
-        </label>
-
-        <label>Valor unitário pago (R$)
-          <input type="number" name="valor_unitario" step="0.01" min="0" />
-        </label>
-
-        <div class="campo-largo" id="area-itens-serializados" hidden>
-          <p>Itens (IMEI + condição) — um por unidade recebida:</p>
-          <div id="lista-itens"></div>
-          <button type="button" class="btn-link" id="btn-add-item">+ Adicionar item</button>
+      <div class="pagina-cabecalho">
+        <div class="pagina-cabecalho-titulo">
+          <div class="pagina-cabecalho-icone" id="icone-pagina"></div>
+          <div>
+            <h1>Estoque de Produtos</h1>
+            <p>Consulte o estoque, movimente produtos e acompanhe a disponibilidade.</p>
+          </div>
         </div>
+        <a href="entrada-estoque.html" class="botao primario">
+          <span id="icone-entrada"></span> Entrada de estoque
+        </a>
+      </div>
 
-        <label class="campo-largo">Observação
-          <input type="text" name="observacao" />
-        </label>
-
-        <div class="acoes">
-          <button type="submit">Registrar entrada</button>
+      <div class="cards-resumo">
+        <div class="card-resumo">
+          <div class="card-resumo-icone azul" id="icone-total"></div>
+          <div>
+            <p class="card-resumo-titulo">Total de produtos</p>
+            <p class="card-resumo-valor" id="valor-total">0</p>
+          </div>
         </div>
-        <div class="mensagem" id="mensagem-entrada"></div>
-      </form>
-    </section>
+        <div class="card-resumo">
+          <div class="card-resumo-icone verde" id="icone-em-estoque"></div>
+          <div>
+            <p class="card-resumo-titulo">Em estoque</p>
+            <p class="card-resumo-valor" id="valor-em-estoque">0</p>
+          </div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone laranja" id="icone-baixo"></div>
+          <div>
+            <p class="card-resumo-titulo">Estoque baixo</p>
+            <p class="card-resumo-valor" id="valor-baixo">0</p>
+          </div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone vermelho" id="icone-sem"></div>
+          <div>
+            <p class="card-resumo-titulo">Sem estoque</p>
+            <p class="card-resumo-valor" id="valor-sem">0</p>
+          </div>
+        </div>
+      </div>
 
-    <section class="card">
-      <h2>Histórico de movimentação</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Tipo</th>
-            <th>Motivo</th>
-            <th>Qtd</th>
-            <th>Valor unit.</th>
-            <th>Origem</th>
-          </tr>
-        </thead>
-        <tbody id="tabela-historico"></tbody>
-      </table>
-    </section>
+      <div class="painel-form">
+        <div class="barra-filtros">
+          <div class="campo-busca-lista">
+            <span id="icone-busca"></span>
+            <input type="text" id="campo-busca" placeholder="Buscar produto, código..." />
+          </div>
+          <label class="campo-filtro">Categoria
+            <select id="filtro-categoria"><option value="">Todas</option></select>
+          </label>
+          <label class="campo-filtro">Situação
+            <select id="filtro-situacao">
+              <option value="">Todas</option>
+              <option value="normal">Normal</option>
+              <option value="baixo">Estoque baixo</option>
+              <option value="sem">Sem estoque</option>
+            </select>
+          </label>
+          <label class="campo-filtro">Empresa / CNPJ
+            <select id="filtro-empresa"></select>
+          </label>
+          <button type="button" class="botao secundario" id="btn-limpar-filtros">
+            <span id="icone-limpar"></span> Limpar
+          </button>
+        </div>
+      </div>
 
-    <section class="card">
-      <h2>Estoque baixo nesta empresa</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Produto</th>
-            <th>Saldo</th>
-            <th>Estoque mínimo</th>
-          </tr>
-        </thead>
-        <tbody id="tabela-estoque-baixo"></tbody>
-      </table>
-    </section>
+      <div class="painel-form">
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Imagem</th>
+                <th>Produto</th>
+                <th>Categoria</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Estoque atual</th>
+                <th>Estoque mínimo</th>
+                <th>Localização</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-estoque"></tbody>
+          </table>
+        </div>
+        <div class="rodape-tabela">
+          <span id="texto-paginacao"></span>
+          <div class="paginacao" id="paginacao"></div>
+        </div>
+      </div>
+
+      <div class="painel-form" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div style="display:flex; gap:10px;">
+          <button type="button" class="botao secundario" id="btn-exportar"><span id="icone-exportar"></span> Exportar (CSV)</button>
+          <button type="button" class="botao secundario" id="btn-imprimir"><span id="icone-imprimir"></span> Imprimir lista</button>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <a href="entrada-estoque.html?transferencia=1" class="botao laranja-claro"><span id="icone-transferir"></span> Transferir entre lojas</a>
+        </div>
+      </div>
     </main>
   </div>
 

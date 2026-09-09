@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Eletrotok - Entrada de Estoque</title>
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/produto-form.css" />
+  <link rel="stylesheet" href="css/produtos-lista.css" />
+  <link rel="stylesheet" href="css/entrada-estoque.css" />
+</head>
+<body>
+  <div id="app-sidebar"></div>
+
+  <div id="app-conteudo">
+    <div id="app-topbar"></div>
+    <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
+
+    <main id="app-main">
+      <div class="pagina-cabecalho">
+        <div class="pagina-cabecalho-titulo">
+          <div class="pagina-cabecalho-icone" id="icone-pagina"></div>
+          <div>
+            <h1>Entrada de Estoque</h1>
+            <p>Registre as entradas de produtos por compra ou transferência.</p>
+          </div>
+        </div>
+        <div class="breadcrumb">
+          <a href="index.html">Início</a> &gt; <a href="estoque.html">Estoque</a> &gt; <strong>Entrada de Estoque</strong>
+        </div>
+      </div>
+
+      <div class="abas">
+        <button type="button" class="ativo" data-aba="nova">Nova Entrada</button>
+        <button type="button" data-aba="historico">Histórico de Entradas</button>
+        <button type="button" data-aba="transferencia">Transferência entre Lojas</button>
+      </div>
+
+      <div data-aba-conteudo="nova">
+        <div class="layout-formulario">
+          <div class="painel-form">
+            <p class="painel-form-titulo"><span id="icone-info"></span> 1. Informações da entrada</p>
+            <div class="grid-campos duas-colunas">
+              <label class="campo">Tipo de entrada *
+                <select id="campo-tipo-entrada" required>
+                  <option value="compra">Compra de fornecedor</option>
+                  <option value="transferencia">Transferência entre empresas</option>
+                  <option value="ajuste">Ajuste de estoque</option>
+                </select>
+              </label>
+              <label class="campo">Empresa / Loja de destino *
+                <select id="campo-empresa-destino" required></select>
+              </label>
+              <label class="campo" id="wrapper-fornecedor">Fornecedor *
+                <select id="campo-fornecedor"></select>
+              </label>
+              <label class="campo" id="wrapper-empresa-origem" hidden>Empresa de origem *
+                <select id="campo-empresa-origem"></select>
+              </label>
+            </div>
+            <a href="fornecedores.html" class="link-inline" id="link-cadastrar-fornecedor">+ Cadastrar fornecedor</a>
+
+            <div class="grid-campos" style="margin-top:14px;">
+              <label class="campo">Número da nota (opcional)
+                <input type="text" id="campo-numero-nota" />
+              </label>
+              <label class="campo">Data da entrada *
+                <input type="date" id="campo-data-entrada" required />
+              </label>
+              <label class="campo largo">Observações (opcional)
+                <input type="text" id="campo-observacoes" placeholder="Ex: Compra de lote, promoção, etc." />
+              </label>
+            </div>
+          </div>
+
+          <div class="painel-form">
+            <p class="painel-form-titulo"><span id="icone-produtos"></span> 2. Adicionar produtos</p>
+            <label class="campo">Buscar produto
+              <input type="text" id="campo-buscar-produto" placeholder="Digite o nome, código..." autocomplete="off" />
+            </label>
+            <div id="resultado-busca-produto" class="lista-sugestoes" hidden></div>
+
+            <div id="produto-selecionado-box" class="produto-selecionado-box" hidden>
+              <div class="miniatura-produto" id="miniatura-produto-selecionado"></div>
+              <div>
+                <div class="celula-produto-nome" id="nome-produto-selecionado"></div>
+                <div class="celula-produto-sub" id="sub-produto-selecionado"></div>
+              </div>
+              <button type="button" class="btn-link" id="btn-trocar-produto">Trocar</button>
+            </div>
+
+            <div id="bloco-quantidade-simples" hidden>
+              <div class="grid-campos duas-colunas" style="margin-top:12px;">
+                <label class="campo">Quantidade *
+                  <div class="stepper">
+                    <button type="button" id="btn-diminuir">-</button>
+                    <input type="number" id="campo-quantidade" min="1" value="1" />
+                    <button type="button" id="btn-aumentar">+</button>
+                  </div>
+                </label>
+                <label class="campo">Valor unitário (R$) *
+                  <input type="number" id="campo-valor-unitario" step="0.01" min="0" />
+                </label>
+              </div>
+            </div>
+
+            <div id="bloco-imei" hidden style="margin-top:12px;">
+              <div class="grid-campos duas-colunas">
+                <label class="campo">IMEI *
+                  <input type="text" id="campo-imei" />
+                </label>
+                <label class="campo">Condição *
+                  <select id="campo-condicao">
+                    <option value="novo">Novo</option>
+                    <option value="seminovo">Seminovo</option>
+                    <option value="vitrine">Vitrine</option>
+                  </select>
+                </label>
+              </div>
+              <label class="campo" style="margin-top:8px;">Valor unitário (R$) *
+                <input type="number" id="campo-valor-unitario-imei" step="0.01" min="0" />
+              </label>
+            </div>
+
+            <button type="button" class="botao primario" id="btn-adicionar-item" style="margin-top:14px; width:100%; justify-content:center;">
+              <span id="icone-adicionar"></span> Adicionar
+            </button>
+            <div class="mensagem" id="mensagem-item"></div>
+          </div>
+        </div>
+
+        <div class="painel-form">
+          <p class="painel-form-titulo"><span id="icone-carrinho"></span> 3. Produtos da entrada</p>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr><th>#</th><th>Produto</th><th>Código</th><th>Quantidade</th><th>Valor unitário (R$)</th><th>Valor total (R$)</th><th>Ações</th></tr>
+              </thead>
+              <tbody id="tabela-itens-entrada"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="barra-acoes-formulario painel-form">
+          <a href="estoque.html" class="botao secundario">Cancelar</a>
+          <div class="lado-direito" style="align-items:center; gap:16px;">
+            <div>Total da entrada: <strong id="total-entrada">R$ 0,00</strong></div>
+            <button type="button" class="botao primario" id="btn-salvar-entrada"><span id="icone-salvar"></span> Salvar entrada</button>
+          </div>
+        </div>
+        <div class="mensagem" id="mensagem-entrada"></div>
+      </div>
+
+      <div data-aba-conteudo="historico" hidden>
+        <div class="painel-form">
+          <p class="painel-form-titulo">Histórico de entradas</p>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr><th>Data</th><th>Produto</th><th>Quantidade</th><th>Valor unitário</th><th>Motivo</th><th>Origem</th></tr>
+              </thead>
+              <tbody id="tabela-historico-entradas"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/shared/api.js"></script>
+  <script src="js/shared/layout.js"></script>
+  <script>initLayout('estoque');</script>
+  <script src="js/pages/entrada-estoque.js"></script>
+</body>
+</html>

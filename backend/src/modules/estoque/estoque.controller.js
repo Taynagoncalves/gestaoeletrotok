@@ -35,6 +35,16 @@ async function saldosDoProdutoPorEmpresa(req, res) {
   res.json(resultado);
 }
 
+async function definirLocalizacao(req, res) {
+  const resultado = await service.definirLocalizacao(req.params.produtoId, req.body.empresa_id, req.body.localizacao);
+  res.json(resultado);
+}
+
+async function historicoGeral(req, res) {
+  const resultado = await service.historicoGeral(req.query.empresa_id);
+  res.json(resultado);
+}
+
 module.exports = {
   registrarEntrada,
   consultarSaldo,
@@ -43,4 +53,6 @@ module.exports = {
   listarSaldos,
   listarEstoqueBaixo,
   saldosDoProdutoPorEmpresa,
+  definirLocalizacao,
+  historicoGeral,
 };

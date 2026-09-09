@@ -1,197 +1,229 @@
-const selectEmpresa = document.getElementById('select-empresa');
-const selectProduto = document.getElementById('select-produto');
-const resumoSaldo = document.getElementById('resumo-saldo');
+const campoBusca = document.getElementById('campo-busca');
+const filtroCategoria = document.getElementById('filtro-categoria');
+const filtroSituacao = document.getElementById('filtro-situacao');
+const filtroEmpresa = document.getElementById('filtro-empresa');
+const btnLimparFiltros = document.getElementById('btn-limpar-filtros');
+const tabelaEstoque = document.getElementById('tabela-estoque');
+const textoPaginacao = document.getElementById('texto-paginacao');
+const paginacao = document.getElementById('paginacao');
 
-const formEntrada = document.getElementById('form-entrada');
-const campoMotivo = document.getElementById('campo-motivo');
-const campoFornecedorWrapper = document.getElementById('campo-fornecedor-wrapper');
-const campoFornecedor = document.getElementById('campo-fornecedor');
-const campoEmpresaOrigemWrapper = document.getElementById('campo-empresa-origem-wrapper');
-const campoEmpresaOrigem = document.getElementById('campo-empresa-origem');
-const campoQuantidadeWrapper = document.getElementById('campo-quantidade-wrapper');
-const campoQuantidade = document.getElementById('campo-quantidade');
-const areaItensSerializados = document.getElementById('area-itens-serializados');
-const listaItens = document.getElementById('lista-itens');
-const btnAddItem = document.getElementById('btn-add-item');
-const mensagemEntrada = document.getElementById('mensagem-entrada');
+const ITENS_POR_PAGINA = 10;
 
-const tabelaHistorico = document.getElementById('tabela-historico');
-const tabelaEstoqueBaixo = document.getElementById('tabela-estoque-baixo');
+let saldos = [];
+let paginaAtual = 1;
 
-let produtos = [];
-let empresas = [];
-
-function produtoSelecionado() {
-  return produtos.find((p) => p.id === Number(selectProduto.value));
+function renderizarIcones() {
+  document.getElementById('icone-pagina').innerHTML = svgIcone('archive');
+  document.getElementById('icone-entrada').innerHTML = svgIcone('plus');
+  document.getElementById('icone-total').innerHTML = svgIcone('box');
+  document.getElementById('icone-em-estoque').innerHTML = svgIcone('check-circle');
+  document.getElementById('icone-baixo').innerHTML = svgIcone('alert-triangle');
+  document.getElementById('icone-sem').innerHTML = svgIcone('x-circle');
+  document.getElementById('icone-busca').innerHTML = svgIcone('search');
+  document.getElementById('icone-limpar').innerHTML = svgIcone('refresh-cw');
+  document.getElementById('icone-exportar').innerHTML = svgIcone('upload');
+  document.getElementById('icone-imprimir').innerHTML = svgIcone('file-text');
+  document.getElementById('icone-transferir').innerHTML = svgIcone('truck');
 }
 
-function atualizarVisibilidadeOrigem() {
-  const motivo = campoMotivo.value;
-  campoFornecedorWrapper.hidden = motivo !== 'compra';
-  campoEmpresaOrigemWrapper.hidden = motivo !== 'transferencia';
+function situacaoDoItem(item) {
+  if (item.saldo <= 0) return 'sem';
+  if (item.saldo <= item.estoque_minimo) return 'baixo';
+  return 'normal';
 }
-
-function atualizarVisibilidadeSerializado() {
-  const produto = produtoSelecionado();
-  const ehCelular = produto && produto.tipo === 'celular';
-  areaItensSerializados.hidden = !ehCelular;
-  campoQuantidadeWrapper.hidden = ehCelular;
-  campoQuantidade.required = !ehCelular;
-
-  if (ehCelular && listaItens.children.length === 0) {
-    adicionarLinhaItem();
-  }
-}
-
-function adicionarLinhaItem() {
-  const linha = document.createElement('div');
-  linha.style.display = 'flex';
-  linha.style.gap = '8px';
-  linha.style.marginBottom = '8px';
-  linha.innerHTML = `
-    <input type="text" placeholder="IMEI" class="campo-imei" required />
-    <select class="campo-condicao" required>
-      <option value="novo">Novo</option>
-      <option value="seminovo">Seminovo</option>
-      <option value="vitrine">Vitrine</option>
-    </select>
-    <button type="button" class="btn-link">Remover</button>
-  `;
-  linha.querySelector('button').addEventListener('click', () => linha.remove());
-  listaItens.appendChild(linha);
-}
-
-btnAddItem.addEventListener('click', adicionarLinhaItem);
-campoMotivo.addEventListener('change', atualizarVisibilidadeOrigem);
-selectProduto.addEventListener('change', () => {
-  atualizarVisibilidadeSerializado();
-  carregarResumo();
-});
-selectEmpresa.addEventListener('change', () => {
-  carregarResumo();
-  carregarHistorico();
-  carregarEstoqueBaixo();
-});
 
 async function carregarEmpresas() {
-  empresas = await api.get('/empresas');
-  selectEmpresa.innerHTML = empresas
-    .map((e) => `<option value="${e.id}">${e.razao_social} (${e.tipo})</option>`)
-    .join('');
-  campoEmpresaOrigem.innerHTML = empresas.map((e) => `<option value="${e.id}">${e.razao_social}</option>`).join('');
+  const empresas = await api.get('/empresas');
+  filtroEmpresa.innerHTML = empresas.map((e) => `<option value="${e.id}">${e.razao_social} (${e.tipo})</option>`).join('');
+
+  const contexto = empresaSelecionada();
+  if (contexto.id && empresas.some((e) => String(e.id) === String(contexto.id))) {
+    filtroEmpresa.value = contexto.id;
+  }
 }
 
-async function carregarFornecedores() {
-  const fornecedores = await api.get('/fornecedores');
-  campoFornecedor.innerHTML = fornecedores.map((f) => `<option value="${f.id}">${f.razao_social}</option>`).join('');
+async function carregarSaldos() {
+  saldos = await api.get(`/estoque/saldos?empresa_id=${filtroEmpresa.value}`);
+  popularFiltroCategoria();
+  atualizarCards();
+  paginaAtual = 1;
+  renderizarTabela();
 }
 
-async function carregarProdutos() {
-  produtos = await api.get('/produtos');
-  selectProduto.innerHTML = produtos.map((p) => `<option value="${p.id}">${p.nome} (${p.tipo})</option>`).join('');
+function popularFiltroCategoria() {
+  const categorias = [...new Set(saldos.map((s) => s.categoria).filter(Boolean))].sort();
+  const selecionada = filtroCategoria.value;
+  filtroCategoria.innerHTML = '<option value="">Todas</option>' + categorias.map((c) => `<option value="${c}">${c}</option>`).join('');
+  filtroCategoria.value = selecionada;
 }
 
-async function carregarResumo() {
-  const produtoId = selectProduto.value;
-  const empresaId = selectEmpresa.value;
-  if (!produtoId || !empresaId) return;
+function atualizarCards() {
+  const emEstoque = saldos.filter((s) => s.saldo > 0).length;
+  const baixo = saldos.filter((s) => situacaoDoItem(s) === 'baixo').length;
+  const sem = saldos.filter((s) => s.saldo <= 0).length;
 
-  const [saldo, custo] = await Promise.all([
-    api.get(`/estoque/produtos/${produtoId}/saldo?empresa_id=${empresaId}`),
-    api.get(`/estoque/produtos/${produtoId}/custo-atual?empresa_id=${empresaId}`),
-  ]);
-
-  const custoTexto = custo.custo_unitario !== null ? `R$ ${Number(custo.custo_unitario).toFixed(2)} (${custo.origem})` : 'sem entradas registradas';
-  resumoSaldo.className = 'mensagem';
-  resumoSaldo.textContent = `Saldo atual: ${saldo.saldo} | Custo mais recente: ${custoTexto}`;
+  document.getElementById('valor-total').textContent = saldos.length;
+  document.getElementById('valor-em-estoque').textContent = emEstoque;
+  document.getElementById('valor-baixo').textContent = baixo;
+  document.getElementById('valor-sem').textContent = sem;
 }
 
-async function carregarHistorico() {
-  const produtoId = selectProduto.value;
-  const empresaId = selectEmpresa.value;
-  if (!produtoId || !empresaId) return;
+function itensFiltrados() {
+  const termo = campoBusca.value.trim().toLowerCase();
+  const categoria = filtroCategoria.value;
+  const situacao = filtroSituacao.value;
 
-  const historico = await api.get(`/estoque/produtos/${produtoId}/historico?empresa_id=${empresaId}`);
-  tabelaHistorico.innerHTML = historico
-    .map((mov) => {
-      const origem = mov.fornecedor_nome || mov.empresa_origem_nome || '-';
-      return `
+  return saldos.filter((item) => {
+    if (termo) {
+      const alvo = `${item.nome} ${item.referencia_interna || ''}`.toLowerCase();
+      if (!alvo.includes(termo)) return false;
+    }
+    if (categoria && item.categoria !== categoria) return false;
+    if (situacao && situacaoDoItem(item) !== situacao) return false;
+    return true;
+  });
+}
+
+function badgeSituacao(situacao) {
+  if (situacao === 'sem') return '<span class="badge-tag inativo" style="background:#fee2e2; color:#b91c1c;">Sem estoque</span>';
+  if (situacao === 'baixo') return '<span class="badge-tag" style="background:#ffe8d1; color:#b45309;">Estoque baixo</span>';
+  return '<span class="badge-tag ativo">Normal</span>';
+}
+
+function renderizarTabela() {
+  const filtrados = itensFiltrados();
+  const totalPaginas = Math.max(1, Math.ceil(filtrados.length / ITENS_POR_PAGINA));
+  paginaAtual = Math.min(paginaAtual, totalPaginas);
+
+  const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA;
+  const pagina = filtrados.slice(inicio, inicio + ITENS_POR_PAGINA);
+
+  tabelaEstoque.innerHTML =
+    pagina
+      .map((item) => {
+        const situacao = situacaoDoItem(item);
+        return `
         <tr>
-          <td>${new Date(mov.data).toLocaleString('pt-BR')}</td>
-          <td>${mov.tipo}</td>
-          <td>${mov.motivo}</td>
-          <td>${mov.quantidade}</td>
-          <td>${mov.valor_unitario ? `R$ ${Number(mov.valor_unitario).toFixed(2)}` : '-'}</td>
-          <td>${origem}</td>
+          <td><input type="checkbox" /></td>
+          <td>
+            <div class="miniatura-produto">
+              ${item.imagem_base64 ? `<img src="${item.imagem_base64}" alt="${item.nome}" />` : svgIcone('box')}
+            </div>
+          </td>
+          <td>
+            <div class="celula-produto-nome">${item.nome}</div>
+            <div class="celula-produto-sub">${item.referencia_interna || ''}</div>
+          </td>
+          <td>${item.categoria || '-'}</td>
+          <td>${item.marca || '-'}</td>
+          <td>${item.modelo || '-'}</td>
+          <td>${item.saldo}</td>
+          <td>${item.estoque_minimo}</td>
+          <td>
+            ${item.tipo === 'celular' ? '<span style="color:#9ca3af;">Por IMEI</span>' : (item.localizacao || '<span style="color:#9ca3af;">-</span>')}
+          </td>
+          <td>${badgeSituacao(situacao)}</td>
+          <td>
+            <div class="acoes-tabela">
+              <button type="button" data-acao="historico" data-id="${item.produto_id}" title="Histórico">${svgIcone('bar-chart')}</button>
+              ${item.tipo !== 'celular' ? `<button type="button" data-acao="localizacao" data-id="${item.produto_id}" title="Definir localização">${svgIcone('edit')}</button>` : ''}
+            </div>
+          </td>
         </tr>
       `;
-    })
-    .join('');
+      })
+      .join('') || `<tr><td colspan="11" style="text-align:center; color:#6b7280; padding:24px;">Nenhum produto encontrado.</td></tr>`;
+
+  textoPaginacao.textContent = filtrados.length
+    ? `Exibindo ${inicio + 1} a ${Math.min(inicio + ITENS_POR_PAGINA, filtrados.length)} de ${filtrados.length} produtos`
+    : 'Nenhum produto encontrado.';
+
+  renderizarPaginacao(totalPaginas);
+  ligarAcoes();
 }
 
-async function carregarEstoqueBaixo() {
-  const empresaId = selectEmpresa.value;
-  if (!empresaId) return;
-
-  const itens = await api.get(`/estoque/saldos/baixo?empresa_id=${empresaId}`);
-  tabelaEstoqueBaixo.innerHTML = itens
-    .map((item) => `<tr><td>${item.nome}</td><td>${item.saldo}</td><td>${item.estoque_minimo}</td></tr>`)
-    .join('');
+function renderizarPaginacao(totalPaginas) {
+  const botoes = [];
+  for (let i = 1; i <= totalPaginas; i += 1) {
+    botoes.push(`<button type="button" class="${i === paginaAtual ? 'ativo' : ''}" data-pagina="${i}">${i}</button>`);
+  }
+  paginacao.innerHTML = botoes.join('');
+  paginacao.querySelectorAll('button').forEach((botao) => {
+    botao.addEventListener('click', () => {
+      paginaAtual = Number(botao.dataset.pagina);
+      renderizarTabela();
+    });
+  });
 }
 
-formEntrada.addEventListener('submit', async (event) => {
-  event.preventDefault();
+function ligarAcoes() {
+  tabelaEstoque.querySelectorAll('button[data-acao]').forEach((botao) => {
+    const produtoId = Number(botao.dataset.id);
+    if (botao.dataset.acao === 'historico') {
+      botao.addEventListener('click', () => {
+        window.location.href = `produto-form.html?id=${produtoId}`;
+      });
+    } else if (botao.dataset.acao === 'localizacao') {
+      botao.addEventListener('click', () => definirLocalizacao(produtoId));
+    }
+  });
+}
 
-  const produto = produtoSelecionado();
-  const dados = Object.fromEntries(new FormData(formEntrada));
+async function definirLocalizacao(produtoId) {
+  const item = saldos.find((s) => s.produto_id === produtoId);
+  const valor = prompt('Localização no estoque (ex: Prateleira A1):', item?.localizacao || '');
+  if (valor === null) return;
 
-  const payload = {
-    produto_id: Number(selectProduto.value),
-    empresa_id: Number(selectEmpresa.value),
-    motivo: dados.motivo,
-    valor_unitario: dados.valor_unitario || null,
-    observacao: dados.observacao || null,
-  };
+  await api.put(`/estoque/produtos/${produtoId}/localizacao`, {
+    empresa_id: filtroEmpresa.value,
+    localizacao: valor,
+  });
+  await carregarSaldos();
+}
 
-  if (dados.motivo === 'compra') {
-    payload.fornecedor_id = Number(campoFornecedor.value);
-  } else if (dados.motivo === 'transferencia') {
-    payload.empresa_origem_id = Number(campoEmpresaOrigem.value);
-  }
+function exportarCsv() {
+  const linhas = [['Produto', 'Categoria', 'Marca', 'Modelo', 'Estoque atual', 'Estoque mínimo', 'Localização']];
+  itensFiltrados().forEach((item) => {
+    linhas.push([item.nome, item.categoria || '', item.marca || '', item.modelo || '', item.saldo, item.estoque_minimo, item.localizacao || '']);
+  });
+  const csv = linhas.map((linha) => linha.map((valor) => `"${String(valor).replace(/"/g, '""')}"`).join(';')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'estoque.csv';
+  link.click();
+  URL.revokeObjectURL(url);
+}
 
-  if (produto && produto.tipo === 'celular') {
-    const linhas = [...listaItens.children];
-    payload.itens = linhas.map((linha) => ({
-      imei: linha.querySelector('.campo-imei').value,
-      condicao: linha.querySelector('.campo-condicao').value,
-    }));
-  } else {
-    payload.quantidade = Number(dados.quantidade);
-  }
-
-  try {
-    await api.post('/estoque/entradas', payload);
-    mensagemEntrada.textContent = 'Entrada registrada com sucesso.';
-    mensagemEntrada.className = 'mensagem sucesso';
-    formEntrada.reset();
-    listaItens.innerHTML = '';
-    atualizarVisibilidadeOrigem();
-    atualizarVisibilidadeSerializado();
-    await Promise.all([carregarResumo(), carregarHistorico(), carregarEstoqueBaixo()]);
-  } catch (erro) {
-    mensagemEntrada.textContent = erro.message;
-    mensagemEntrada.className = 'mensagem erro';
-  }
+[campoBusca, filtroCategoria, filtroSituacao].forEach((elemento) => {
+  elemento.addEventListener('input', () => {
+    paginaAtual = 1;
+    renderizarTabela();
+  });
 });
+
+filtroEmpresa.addEventListener('change', () => carregarSaldos().catch((erro) => mostrarErro(erro.message)));
+
+btnLimparFiltros.addEventListener('click', () => {
+  campoBusca.value = '';
+  filtroCategoria.value = '';
+  filtroSituacao.value = '';
+  paginaAtual = 1;
+  renderizarTabela();
+});
+
+document.getElementById('btn-exportar').addEventListener('click', exportarCsv);
+document.getElementById('btn-imprimir').addEventListener('click', () => window.print());
+
+function mostrarErro(texto) {
+  tabelaEstoque.innerHTML = `<tr><td colspan="11" style="color:#b00020;">${texto}</td></tr>`;
+}
 
 async function iniciar() {
-  await Promise.all([carregarEmpresas(), carregarFornecedores(), carregarProdutos()]);
-  atualizarVisibilidadeOrigem();
-  atualizarVisibilidadeSerializado();
-  await Promise.all([carregarResumo(), carregarHistorico(), carregarEstoqueBaixo()]);
+  renderizarIcones();
+  await carregarEmpresas();
+  await carregarSaldos();
 }
 
-iniciar().catch((erro) => {
-  mensagemEntrada.textContent = erro.message;
-  mensagemEntrada.className = 'mensagem erro';
-});
+iniciar().catch((erro) => mostrarErro(erro.message));

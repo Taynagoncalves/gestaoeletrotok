@@ -18,13 +18,14 @@ async function inserirMovimentacao(connection, dados) {
     motivo,
     observacao,
     usuario_id,
+    data,
   } = dados;
 
   await connection.query(
     `INSERT INTO movimentacoes_estoque
       (produto_id, empresa_id, produto_item_id, tipo, quantidade, valor_unitario,
-       fornecedor_id, empresa_origem_id, motivo, observacao, usuario_id)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       fornecedor_id, empresa_origem_id, motivo, observacao, usuario_id, data)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP))`,
     [
       produto_id,
       empresa_id,
@@ -37,6 +38,7 @@ async function inserirMovimentacao(connection, dados) {
       motivo,
       observacao || null,
       usuario_id || null,
+      data || null,
     ]
   );
 }
@@ -122,15 +124,44 @@ async function historico(produtoId, empresaId) {
 
 async function saldosPorEmpresa(empresaId) {
   const [rows] = await db.query(
-    `SELECT p.id AS produto_id, p.nome, p.tipo, p.estoque_minimo,
+    `SELECT p.id AS produto_id, p.nome, p.tipo, p.estoque_minimo, p.categoria, p.marca,
+            p.modelo, p.referencia_interna, p.imagem_base64, p.ativo,
             CASE WHEN p.tipo = 'celular'
               THEN (SELECT COUNT(*) FROM produto_itens pi WHERE pi.produto_id = p.id AND pi.empresa_id = ? AND pi.status = 'em_estoque')
               ELSE COALESCE((SELECT es.quantidade FROM estoque_saldos es WHERE es.produto_id = p.id AND es.empresa_id = ?), 0)
-            END AS saldo
+            END AS saldo,
+            CASE WHEN p.tipo = 'celular' THEN NULL
+              ELSE (SELECT es.localizacao FROM estoque_saldos es WHERE es.produto_id = p.id AND es.empresa_id = ?)
+            END AS localizacao
      FROM produtos p
      WHERE p.ativo = 1
      ORDER BY p.nome`,
-    [empresaId, empresaId]
+    [empresaId, empresaId, empresaId]
+  );
+  return rows;
+}
+
+async function definirLocalizacao(produtoId, empresaId, localizacao) {
+  await db.query(
+    `INSERT INTO estoque_saldos (produto_id, empresa_id, quantidade, localizacao)
+     VALUES (?, ?, 0, ?)
+     ON DUPLICATE KEY UPDATE localizacao = VALUES(localizacao)`,
+    [produtoId, empresaId, localizacao]
+  );
+}
+
+async function historicoGeral(empresaId) {
+  const [rows] = await db.query(
+    `SELECT me.*, p.nome AS produto_nome, p.referencia_interna,
+            f.razao_social AS fornecedor_nome, eo.razao_social AS empresa_origem_nome
+     FROM movimentacoes_estoque me
+     JOIN produtos p ON p.id = me.produto_id
+     LEFT JOIN fornecedores f ON f.id = me.fornecedor_id
+     LEFT JOIN empresas eo ON eo.id = me.empresa_origem_id
+     WHERE me.empresa_id = ? AND me.tipo = 'entrada'
+     ORDER BY me.data DESC, me.id DESC
+     LIMIT 200`,
+    [empresaId]
   );
   return rows;
 }
@@ -165,4 +196,6 @@ module.exports = {
   historico,
   saldosPorEmpresa,
   saldosDoProdutoPorEmpresa,
+  definirLocalizacao,
+  historicoGeral,
 };

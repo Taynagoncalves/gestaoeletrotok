@@ -16,6 +16,7 @@ async function registrarEntrada(dados) {
     itens,
     observacao,
     usuario_id,
+    data,
   } = dados;
 
   if (!produto_id || !empresa_id || !motivo) {
@@ -94,6 +95,7 @@ async function registrarEntrada(dados) {
           motivo,
           observacao,
           usuario_id,
+          data,
         });
       }
     } else {
@@ -114,6 +116,7 @@ async function registrarEntrada(dados) {
         motivo,
         observacao,
         usuario_id,
+        data,
       });
     }
 
@@ -177,6 +180,28 @@ async function saldosDoProdutoPorEmpresa(produtoId) {
   return repository.saldosDoProdutoPorEmpresa(produtoId);
 }
 
+async function definirLocalizacao(produtoId, empresaId, localizacao) {
+  const produto = await repository.buscarProduto(produtoId);
+  if (!produto) {
+    throw new AppError('Produto não encontrado.', 404);
+  }
+  if (produto.tipo === 'celular') {
+    throw new AppError('Produtos controlados por IMEI não têm localização agregada. Defina por unidade.');
+  }
+  if (!empresaId) {
+    throw new AppError('Empresa é obrigatória.');
+  }
+  await repository.definirLocalizacao(produtoId, empresaId, localizacao || null);
+  return repository.saldosDoProdutoPorEmpresa(produtoId);
+}
+
+async function historicoGeral(empresaId) {
+  if (!empresaId) {
+    throw new AppError('Empresa é obrigatória.');
+  }
+  return repository.historicoGeral(empresaId);
+}
+
 module.exports = {
   registrarEntrada,
   consultarSaldo,
@@ -185,4 +210,6 @@ module.exports = {
   listarEstoqueBaixo,
   listarSaldos,
   saldosDoProdutoPorEmpresa,
+  definirLocalizacao,
+  historicoGeral,
 };

@@ -313,6 +313,7 @@
 .botao.primario { background: var(--accent, #f5821f); color: #fff; }
 .botao.secundario { background: #fff; color: var(--text-principal, #1f2430); border: 1px solid var(--border, #e5e7eb); }
 .botao.perigo { background: #fff; color: #dc2626; border: 1px solid #fecaca; }
+.botao.laranja-claro { background: #ffe8d1; color: #b45309; }
 
 .tabela-saldo-empresas {
   width: 100%;
