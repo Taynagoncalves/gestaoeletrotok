@@ -42,7 +42,7 @@ async function run() {
 
   try {
     await connection.query(
-      `CREATE DATABASE IF NOT EXISTS \`${env.db.database}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`
+      `CREATE DATABASE IF NOT EXISTS \`${env.db.database}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci`
     );
   } catch (err) {
     console.warn(

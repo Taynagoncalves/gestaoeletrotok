@@ -1,6 +1,6 @@
 // Preencha com a URL pública do backend assim que ele estiver publicado
 // (ex: 'https://gestaoeletrotok-backend.onrender.com/api').
-const PRODUCTION_API_URL = 'https://SUBSTITUA-PELA-URL-DO-BACKEND.onrender.com/api';
+const PRODUCTION_API_URL = 'https://gestaoeletrotok.onrender.com/api';
 
 const API_BASE_URL =
   window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
