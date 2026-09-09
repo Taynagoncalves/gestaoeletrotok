@@ -1,0 +1,23 @@
+const express = require('express');
+const cors = require('cors');
+const empresasRoutes = require('./modules/empresas/empresas.routes');
+const fornecedoresRoutes = require('./modules/fornecedores/fornecedores.routes');
+const produtosRoutes = require('./modules/produtos/produtos.routes');
+const estoqueRoutes = require('./modules/estoque/estoque.routes');
+const errorHandler = require('./middlewares/errorHandler');
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+app.get('/health', (req, res) => res.json({ status: 'ok' }));
+
+app.use('/api/empresas', empresasRoutes);
+app.use('/api/fornecedores', fornecedoresRoutes);
+app.use('/api/produtos', produtosRoutes);
+app.use('/api/estoque', estoqueRoutes);
+
+app.use(errorHandler);
+
+module.exports = app;

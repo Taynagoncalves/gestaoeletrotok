@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Eletrotok - Produtos</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>Eletrotok - Gestão</h1>
+    <nav>
+      <a href="index.html">Empresas</a>
+      <a href="fornecedores.html">Fornecedores</a>
+      <a href="produtos.html" class="ativo">Produtos</a>
+      <a href="estoque.html">Estoque</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Novo produto</h2>
+      <form id="form-produto">
+        <label class="campo-largo">Nome
+          <input type="text" name="nome" required />
+        </label>
+        <label>Categoria
+          <input type="text" name="categoria" />
+        </label>
+        <label>Marca
+          <input type="text" name="marca" />
+        </label>
+        <label>Tipo
+          <select name="tipo" id="campo-tipo" required>
+            <option value="">Selecione</option>
+            <option value="celular">Celular (controle por IMEI)</option>
+            <option value="acessorio">Acessório (por quantidade)</option>
+            <option value="eletronico">Eletrônico (por quantidade)</option>
+          </select>
+        </label>
+        <label>Estoque mínimo (alerta)
+          <input type="number" name="estoque_minimo" min="0" value="0" />
+        </label>
+        <label class="campo-largo">Descrição
+          <input type="text" name="descricao" />
+        </label>
+        <div class="acoes">
+          <button type="submit">Salvar</button>
+          <button type="button" class="btn-link" id="btn-cancelar-edicao" hidden>Cancelar edição</button>
+        </div>
+        <div class="mensagem" id="mensagem-produto"></div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Produtos cadastrados</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Tipo</th>
+            <th>Categoria</th>
+            <th>Estoque mínimo</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tabela-produtos"></tbody>
+      </table>
+    </section>
+
+    <section class="card" id="secao-precos" hidden>
+      <h2>Preços por empresa — <span id="produto-selecionado-nome"></span></h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Empresa</th>
+            <th>Preço de venda (R$)</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tabela-precos"></tbody>
+      </table>
+      <div class="mensagem" id="mensagem-precos"></div>
+    </section>
+  </main>
+
+  <script src="js/shared/api.js"></script>
+  <script src="js/pages/produtos.js"></script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Eletrotok - Estoque</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>Eletrotok - Gestão</h1>
+    <nav>
+      <a href="index.html">Empresas</a>
+      <a href="fornecedores.html">Fornecedores</a>
+      <a href="produtos.html">Produtos</a>
+      <a href="estoque.html" class="ativo">Estoque</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Contexto</h2>
+      <form id="form-contexto" onsubmit="return false">
+        <label>Empresa
+          <select id="select-empresa" required></select>
+        </label>
+        <label>Produto
+          <select id="select-produto" required></select>
+        </label>
+      </form>
+      <div id="resumo-saldo" class="mensagem"></div>
+    </section>
+
+    <section class="card">
+      <h2>Registrar entrada de estoque</h2>
+      <form id="form-entrada">
+        <label>Motivo
+          <select name="motivo" id="campo-motivo" required>
+            <option value="compra">Compra de fornecedor</option>
+            <option value="transferencia">Transferência entre empresas (Eletrotok)</option>
+            <option value="ajuste">Ajuste de estoque</option>
+          </select>
+        </label>
+
+        <label id="campo-fornecedor-wrapper">Fornecedor
+          <select name="fornecedor_id" id="campo-fornecedor"></select>
+        </label>
+
+        <label id="campo-empresa-origem-wrapper" hidden>Empresa de origem
+          <select name="empresa_origem_id" id="campo-empresa-origem"></select>
+        </label>
+
+        <label id="campo-quantidade-wrapper">Quantidade
+          <input type="number" name="quantidade" id="campo-quantidade" min="1" />
+        </label>
+
+        <label>Valor unitário pago (R$)
+          <input type="number" name="valor_unitario" step="0.01" min="0" />
+        </label>
+
+        <div class="campo-largo" id="area-itens-serializados" hidden>
+          <p>Itens (IMEI + condição) — um por unidade recebida:</p>
+          <div id="lista-itens"></div>
+          <button type="button" class="btn-link" id="btn-add-item">+ Adicionar item</button>
+        </div>
+
+        <label class="campo-largo">Observação
+          <input type="text" name="observacao" />
+        </label>
+
+        <div class="acoes">
+          <button type="submit">Registrar entrada</button>
+        </div>
+        <div class="mensagem" id="mensagem-entrada"></div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Histórico de movimentação</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Tipo</th>
+            <th>Motivo</th>
+            <th>Qtd</th>
+            <th>Valor unit.</th>
+            <th>Origem</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-historico"></tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Estoque baixo nesta empresa</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Saldo</th>
+            <th>Estoque mínimo</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-estoque-baixo"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="js/shared/api.js"></script>
+  <script src="js/pages/estoque.js"></script>
+</body>
+</html>
