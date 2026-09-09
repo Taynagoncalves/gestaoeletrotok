@@ -11,6 +11,7 @@ const usuariosRoutes = require('./modules/usuarios/usuarios.routes');
 const importacaoRoutes = require('./modules/importacao/importacao.routes');
 const notasFiscaisRoutes = require('./modules/notas-fiscais/notas-fiscais.routes');
 const financeiroRoutes = require('./modules/financeiro/financeiro.routes');
+const relatoriosRoutes = require('./modules/relatorios/relatorios.routes');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
@@ -33,6 +34,7 @@ app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/importacao', importacaoRoutes);
 app.use('/api/notas-fiscais', notasFiscaisRoutes);
 app.use('/api/financeiro', financeiroRoutes);
+app.use('/api/relatorios', relatoriosRoutes);
 
 app.use(errorHandler);
 

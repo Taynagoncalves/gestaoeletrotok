@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <title>Eletrotok - Relatórios</title>
   <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/produto-form.css" />
+  <link rel="stylesheet" href="css/produtos-lista.css" />
+  <link rel="stylesheet" href="css/financeiro.css" />
+  <link rel="stylesheet" href="css/relatorios.css" />
 </head>
 <body>
   <div id="app-sidebar"></div>
@@ -11,21 +15,140 @@
     <div id="app-topbar"></div>
     <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
     <main id="app-main">
-      <div class="dashboard-cabecalho">
-        <div>
-          <h1>Relatórios</h1>
-          <p>Vendas por período, margem por produto e consolidado entre empresas.</p>
+      <div class="pagina-cabecalho">
+        <div class="pagina-cabecalho-titulo">
+          <div class="pagina-cabecalho-icone" id="icone-pagina"></div>
+          <div>
+            <h1>Relatórios</h1>
+            <p>Vendas por período, margem por produto e estoque consolidado.</p>
+          </div>
         </div>
       </div>
-      <div class="aviso-em-construcao">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
-        <p>Módulo em construção.</p>
-        <p>Em breve esta tela vai trazer relatórios detalhados de vendas, margem e estoque.</p>
+
+      <div class="relatorios-abas">
+        <button type="button" class="ativo" data-relatorio="vendas">Vendas</button>
+        <button type="button" data-relatorio="margem">Margem / Lucro</button>
+        <button type="button" data-relatorio="estoque">Estoque Consolidado</button>
+      </div>
+
+      <div class="painel-form" id="painel-filtros">
+        <div class="grid-campos" id="grid-filtros">
+          <label class="campo">Empresa
+            <select id="campo-empresa">
+              <option value="todas">Todas as empresas (consolidado)</option>
+            </select>
+          </label>
+          <label class="campo">De
+            <input type="date" id="campo-de" />
+          </label>
+          <label class="campo">Até
+            <input type="date" id="campo-ate" />
+          </label>
+          <label class="campo" id="wrapper-agrupar">Agrupar por
+            <select id="campo-agrupar">
+              <option value="dia">Dia</option>
+              <option value="semana">Semana</option>
+              <option value="mes">Mês</option>
+            </select>
+          </label>
+        </div>
+        <button type="button" class="botao primario" id="btn-gerar" style="margin-top:12px;"><span id="icone-gerar"></span> Gerar relatório</button>
+        <button type="button" class="botao secundario" id="btn-exportar-relatorio" style="margin-top:12px;"><span id="icone-exportar"></span> Exportar CSV</button>
+      </div>
+
+      <!-- ===== RELATÓRIO DE VENDAS ===== -->
+      <div data-relatorio-conteudo="vendas">
+        <div class="cards-resumo">
+          <div class="card-resumo">
+            <div class="card-resumo-icone verde" id="icone-total-vendas"></div>
+            <div><p class="card-resumo-titulo">Total vendido</p><p class="card-resumo-valor" id="valor-total-vendas">R$ 0,00</p></div>
+          </div>
+          <div class="card-resumo">
+            <div class="card-resumo-icone azul" id="icone-qtd-vendas"></div>
+            <div><p class="card-resumo-titulo">Vendas realizadas</p><p class="card-resumo-valor" id="valor-qtd-vendas">0</p></div>
+          </div>
+          <div class="card-resumo">
+            <div class="card-resumo-icone roxo" id="icone-ticket"></div>
+            <div><p class="card-resumo-titulo">Ticket médio</p><p class="card-resumo-valor" id="valor-ticket">R$ 0,00</p></div>
+          </div>
+        </div>
+
+        <div class="painel-form" id="painel-por-empresa" hidden>
+          <p class="painel-form-titulo">Por empresa</p>
+          <table>
+            <thead><tr><th>Empresa</th><th>Tipo</th><th>Total vendido</th><th>Qtd. vendas</th></tr></thead>
+            <tbody id="tabela-por-empresa"></tbody>
+          </table>
+        </div>
+
+        <div class="painel-form">
+          <p class="painel-form-titulo">Evolução no período</p>
+          <table>
+            <thead><tr><th>Período</th><th>Total</th><th>Qtd. vendas</th></tr></thead>
+            <tbody id="tabela-por-periodo"></tbody>
+          </table>
+        </div>
+
+        <div class="layout-formulario">
+          <div class="painel-form">
+            <p class="painel-form-titulo">Por forma de pagamento</p>
+            <table>
+              <thead><tr><th>Forma</th><th>Total</th></tr></thead>
+              <tbody id="tabela-por-forma"></tbody>
+            </table>
+          </div>
+          <div class="painel-form">
+            <p class="painel-form-titulo">Por canal</p>
+            <table>
+              <thead><tr><th>Canal</th><th>Total</th><th>Qtd.</th></tr></thead>
+              <tbody id="tabela-por-canal"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== RELATÓRIO DE MARGEM ===== -->
+      <div data-relatorio-conteudo="margem" hidden>
+        <div class="cards-resumo">
+          <div class="card-resumo">
+            <div class="card-resumo-icone azul" id="icone-receita"></div>
+            <div><p class="card-resumo-titulo">Receita</p><p class="card-resumo-valor" id="valor-receita">R$ 0,00</p></div>
+          </div>
+          <div class="card-resumo">
+            <div class="card-resumo-icone vermelho" id="icone-custo"></div>
+            <div><p class="card-resumo-titulo">Custo</p><p class="card-resumo-valor" id="valor-custo">R$ 0,00</p></div>
+          </div>
+          <div class="card-resumo">
+            <div class="card-resumo-icone verde" id="icone-margem"></div>
+            <div><p class="card-resumo-titulo">Margem</p><p class="card-resumo-valor" id="valor-margem">R$ 0,00</p><span id="valor-margem-percentual" style="font-size:12px;"></span></div>
+          </div>
+        </div>
+
+        <div class="painel-form">
+          <p class="painel-form-titulo">Margem por produto</p>
+          <table>
+            <thead><tr><th>Produto</th><th>Categoria</th><th>Qtd. vendida</th><th>Receita</th><th>Custo</th><th>Margem</th><th>Margem %</th></tr></thead>
+            <tbody id="tabela-margem-produto"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== ESTOQUE CONSOLIDADO ===== -->
+      <div data-relatorio-conteudo="estoque" hidden>
+        <div class="painel-form">
+          <p class="painel-form-titulo">Saldo consolidado por produto (todas as empresas)</p>
+          <div style="overflow-x:auto;">
+            <table id="tabela-estoque-consolidado-wrapper">
+              <thead id="cabecalho-estoque-consolidado"></thead>
+              <tbody id="tabela-estoque-consolidado"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </main>
   </div>
   <script src="js/shared/api.js"></script>
   <script src="js/shared/layout.js"></script>
-  <script>initLayout('relatorios');</script>
+  <script src="js/pages/relatorios.js"></script>
 </body>
 </html>
