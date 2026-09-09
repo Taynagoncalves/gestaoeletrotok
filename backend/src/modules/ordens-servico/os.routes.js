@@ -16,5 +16,8 @@ router.post('/:id/orcamentos', asyncHandler(controller.criarOrcamento));
 router.put('/orcamentos/:orcamentoId/resposta', asyncHandler(controller.responderOrcamento));
 router.post('/:id/entrega', asyncHandler(controller.registrarEntrega));
 router.put('/:id/garantia', asyncHandler(controller.registrarGarantia));
+router.post('/:id/fotos', asyncHandler(controller.adicionarFoto));
+router.get('/:id/fotos/:fotoId', asyncHandler(controller.buscarFoto));
+router.delete('/:id/fotos/:fotoId', asyncHandler(controller.removerFoto));
 
 module.exports = router;

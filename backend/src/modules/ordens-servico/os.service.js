@@ -52,6 +52,16 @@ async function abrirOS(dados) {
     await repository.substituirChecklist(osId, dados.checklist);
   }
 
+  if (Array.isArray(dados.fotos)) {
+    for (const foto of dados.fotos) {
+      await repository.inserirFoto(osId, foto);
+    }
+  }
+
+  if (dados.garantia && dados.garantia.prazo_dias) {
+    await repository.upsertGarantia(osId, dados.garantia);
+  }
+
   return repository.buscarCompletoPorId(osId);
 }
 
@@ -85,6 +95,30 @@ async function registrarChecklist(osId, itens) {
   }
   await repository.substituirChecklist(osId, itens);
   return buscarPorId(osId);
+}
+
+async function adicionarFoto(osId, imagemBase64) {
+  await buscarBasicoPorId(osId);
+  if (!imagemBase64) {
+    throw new AppError('Imagem é obrigatória.');
+  }
+  await repository.inserirFoto(osId, imagemBase64);
+  return repository.listarFotos(osId);
+}
+
+async function buscarFoto(osId, fotoId) {
+  await buscarBasicoPorId(osId);
+  const foto = await repository.buscarFotoPorId(fotoId);
+  if (!foto || foto.os_id !== Number(osId)) {
+    throw new AppError('Foto não encontrada.', 404);
+  }
+  return foto;
+}
+
+async function removerFoto(osId, fotoId) {
+  await buscarFoto(osId, fotoId);
+  await repository.removerFoto(fotoId);
+  return repository.listarFotos(osId);
 }
 
 async function registrarTermo(osId, assinaturaBase64) {
@@ -245,4 +279,7 @@ module.exports = {
   responderOrcamento,
   registrarEntrega,
   registrarGarantia,
+  adicionarFoto,
+  buscarFoto,
+  removerFoto,
 };

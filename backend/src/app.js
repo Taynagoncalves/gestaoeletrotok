@@ -7,6 +7,7 @@ const estoqueRoutes = require('./modules/estoque/estoque.routes');
 const clientesRoutes = require('./modules/clientes/clientes.routes');
 const vendasRoutes = require('./modules/vendas/vendas.routes');
 const osRoutes = require('./modules/ordens-servico/os.routes');
+const usuariosRoutes = require('./modules/usuarios/usuarios.routes');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
@@ -25,6 +26,7 @@ app.use('/api/estoque', estoqueRoutes);
 app.use('/api/clientes', clientesRoutes);
 app.use('/api/vendas', vendasRoutes);
 app.use('/api/ordens-servico', osRoutes);
+app.use('/api/usuarios', usuariosRoutes);
 
 app.use(errorHandler);
 

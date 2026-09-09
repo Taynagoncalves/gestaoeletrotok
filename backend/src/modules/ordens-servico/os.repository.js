@@ -82,6 +82,7 @@ async function buscarCompletoPorId(id) {
 
   const [entregaRows] = await db.query('SELECT * FROM os_entrega WHERE os_id = ?', [id]);
   const [garantiaRows] = await db.query('SELECT * FROM os_garantia WHERE os_id = ?', [id]);
+  const [fotos] = await db.query('SELECT id, criado_em FROM os_fotos WHERE os_id = ? ORDER BY criado_em', [id]);
 
   return {
     ...os,
@@ -91,6 +92,7 @@ async function buscarCompletoPorId(id) {
     historico_status: historico,
     entrega: entregaRows[0] || null,
     garantia: garantiaRows[0] || null,
+    fotos,
   };
 }
 
@@ -151,12 +153,33 @@ async function inserirHistoricoStatus(osId, status, usuarioId) {
 async function substituirChecklist(osId, itens) {
   await db.query('DELETE FROM os_checklist WHERE os_id = ?', [osId]);
   for (const item of itens) {
-    await db.query('INSERT INTO os_checklist (os_id, item, resultado) VALUES (?, ?, ?)', [
-      osId,
-      item.item,
-      item.resultado || null,
-    ]);
+    await db.query(
+      'INSERT INTO os_checklist (os_id, tipo, item, marcado, resultado) VALUES (?, ?, ?, ?, ?)',
+      [osId, item.tipo || 'outro', item.item, item.marcado ? 1 : 0, item.resultado || null]
+    );
   }
+}
+
+async function inserirFoto(osId, imagemBase64) {
+  const [result] = await db.query('INSERT INTO os_fotos (os_id, imagem_base64) VALUES (?, ?)', [
+    osId,
+    imagemBase64,
+  ]);
+  return result.insertId;
+}
+
+async function listarFotos(osId) {
+  const [rows] = await db.query('SELECT id, os_id, criado_em FROM os_fotos WHERE os_id = ? ORDER BY criado_em', [osId]);
+  return rows;
+}
+
+async function buscarFotoPorId(id) {
+  const [rows] = await db.query('SELECT * FROM os_fotos WHERE id = ?', [id]);
+  return rows[0] || null;
+}
+
+async function removerFoto(id) {
+  await db.query('DELETE FROM os_fotos WHERE id = ?', [id]);
 }
 
 async function upsertTermo(osId, assinaturaBase64) {
@@ -234,4 +257,8 @@ module.exports = {
   atualizarStatusOrcamento,
   inserirEntrega,
   upsertGarantia,
+  inserirFoto,
+  listarFotos,
+  buscarFotoPorId,
+  removerFoto,
 };

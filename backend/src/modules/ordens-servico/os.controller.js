@@ -63,6 +63,21 @@ async function registrarGarantia(req, res) {
   res.json(os);
 }
 
+async function adicionarFoto(req, res) {
+  const fotos = await service.adicionarFoto(req.params.id, req.body.imagem_base64);
+  res.status(201).json(fotos);
+}
+
+async function buscarFoto(req, res) {
+  const foto = await service.buscarFoto(req.params.id, req.params.fotoId);
+  res.json(foto);
+}
+
+async function removerFoto(req, res) {
+  const fotos = await service.removerFoto(req.params.id, req.params.fotoId);
+  res.json(fotos);
+}
+
 module.exports = {
   abrirOS,
   buscarPorId,
@@ -76,4 +91,7 @@ module.exports = {
   responderOrcamento,
   registrarEntrega,
   registrarGarantia,
+  adicionarFoto,
+  buscarFoto,
+  removerFoto,
 };
