@@ -20,6 +20,16 @@ async function getAppliedMigrations(connection) {
   return new Set(rows.map((row) => row.nome));
 }
 
+function resolverSsl() {
+  if (!env.db.ssl) return undefined;
+
+  if (process.env.DB_SSL_CA_PATH) {
+    return { ca: fs.readFileSync(process.env.DB_SSL_CA_PATH) };
+  }
+
+  return { rejectUnauthorized: false };
+}
+
 async function run() {
   const connection = await mysql.createConnection({
     host: env.db.host,
@@ -27,11 +37,20 @@ async function run() {
     user: env.db.user,
     password: env.db.password,
     multipleStatements: true,
+    ssl: resolverSsl(),
   });
 
-  await connection.query(
-    `CREATE DATABASE IF NOT EXISTS \`${env.db.database}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`
-  );
+  try {
+    await connection.query(
+      `CREATE DATABASE IF NOT EXISTS \`${env.db.database}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`
+    );
+  } catch (err) {
+    console.warn(
+      `Não foi possível criar o database automaticamente (${err.message}). ` +
+        'Prosseguindo assumindo que ele já existe (comum em provedores gerenciados como Aiven).'
+    );
+  }
+
   await connection.changeUser({ database: env.db.database });
 
   await ensureMigrationsTable(connection);
