@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Eletrotok - Ordem de Serviço</title>
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/produto-form.css" />
+  <link rel="stylesheet" href="css/entrada-estoque.css" />
+  <link rel="stylesheet" href="css/os.css" />
+</head>
+<body>
+  <div id="app-sidebar"></div>
+
+  <div id="app-conteudo">
+    <div id="app-topbar"></div>
+    <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
+
+    <main id="app-main">
+      <div class="pagina-cabecalho">
+        <div class="pagina-cabecalho-titulo">
+          <div class="pagina-cabecalho-icone" id="icone-pagina"></div>
+          <div>
+            <h1 id="titulo-pagina">Nova Ordem de Serviço</h1>
+            <p id="subtitulo-pagina">Cadastre uma nova assistência técnica para acompanhamento e orçamento.</p>
+          </div>
+        </div>
+        <div class="breadcrumb">
+          <a href="index.html">Início</a> &gt; <a href="ordem-servico.html">Ordem de Serviço</a> &gt; <strong id="breadcrumb-atual">Nova OS</strong>
+        </div>
+      </div>
+
+      <!-- ===================== MODO CRIACAO ===================== -->
+      <div id="modo-criacao">
+        <div class="layout-formulario">
+          <div>
+            <div class="painel-form">
+              <p class="painel-form-titulo"><span id="icone-cliente"></span> Dados do cliente</p>
+              <input type="text" id="campo-buscar-cliente" placeholder="Buscar cliente por nome, CPF ou telefone..." autocomplete="off" />
+              <div id="resultado-busca-cliente" class="lista-sugestoes" hidden></div>
+              <div id="cliente-selecionado-box" class="produto-selecionado-box" hidden>
+                <span id="icone-cliente-sel"></span>
+                <div>
+                  <div class="celula-produto-nome" id="nome-cliente-selecionado"></div>
+                  <div class="celula-produto-sub" id="sub-cliente-selecionado"></div>
+                </div>
+                <button type="button" class="btn-link" id="btn-trocar-cliente">Trocar</button>
+              </div>
+              <button type="button" class="btn-link" id="btn-mostrar-novo-cliente">+ Cadastrar novo cliente</button>
+              <div class="form-cliente-rapido" id="form-cliente-rapido" hidden>
+                <div class="grid-campos duas-colunas">
+                  <label class="campo">Nome *<input type="text" id="novo-cliente-nome" /></label>
+                  <label class="campo">Telefone / WhatsApp<input type="text" id="novo-cliente-telefone" /></label>
+                  <label class="campo">CPF (opcional)<input type="text" id="novo-cliente-cpf" /></label>
+                </div>
+                <button type="button" class="botao primario" style="margin-top:8px;" id="btn-salvar-novo-cliente">Salvar cliente</button>
+              </div>
+            </div>
+
+            <div class="painel-form">
+              <p class="painel-form-titulo"><span id="icone-aparelho"></span> Dados do aparelho</p>
+              <div class="grid-campos">
+                <label class="campo">Marca *<input type="text" id="campo-marca" required /></label>
+                <label class="campo">Modelo *<input type="text" id="campo-modelo" required /></label>
+                <label class="campo">Cor<input type="text" id="campo-cor" /></label>
+              </div>
+              <div class="grid-campos duas-colunas" style="margin-top:12px;">
+                <label class="campo">IMEI / Nº de série<input type="text" id="campo-imei" /></label>
+                <label class="campo">Senha / Padrão de desbloqueio<input type="text" id="campo-senha" /></label>
+              </div>
+              <label class="campo largo" style="margin-top:12px;">Defeito relatado pelo cliente *
+                <textarea id="campo-defeito" required></textarea>
+              </label>
+            </div>
+
+            <div class="painel-form">
+              <p class="painel-form-titulo">Acessórios entregues</p>
+              <div class="checkbox-grid" id="grid-acessorios"></div>
+            </div>
+
+            <div class="painel-form">
+              <p class="painel-form-titulo">Condições de entrada</p>
+              <div class="checkbox-grid" id="grid-condicoes"></div>
+              <label class="campo largo" style="margin-top:10px;">Observações adicionais
+                <input type="text" id="campo-observacoes-entrada" placeholder="Descreva outras observações sobre o estado do aparelho..." />
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <div class="painel-form">
+              <p class="painel-form-titulo"><span id="icone-fotos"></span> Fotos do aparelho</p>
+              <div class="grid-fotos" id="grid-fotos-nova">
+                <div class="foto-add" id="btn-add-foto">+</div>
+              </div>
+              <input type="file" id="campo-foto" accept="image/png, image/jpeg" hidden multiple />
+            </div>
+
+            <div class="painel-form">
+              <p class="painel-form-titulo">Detalhes do atendimento</p>
+              <label class="campo">Empresa / Loja
+                <select id="campo-empresa"></select>
+              </label>
+              <label class="campo" style="margin-top:10px;">Técnico responsável
+                <select id="campo-tecnico"><option value="">Selecione...</option></select>
+              </label>
+              <label class="campo" style="margin-top:10px;">Prazo estimado
+                <input type="date" id="campo-prazo" />
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="barra-acoes-formulario painel-form">
+          <a href="ordem-servico.html" class="botao secundario"><span id="icone-voltar"></span> Cancelar</a>
+          <button type="button" class="botao primario" id="btn-abrir-os"><span id="icone-abrir"></span> Abrir Ordem de Serviço</button>
+        </div>
+        <div class="mensagem" id="mensagem-criacao"></div>
+      </div>
+
+      <!-- ===================== MODO GESTAO ===================== -->
+      <div id="modo-gestao" hidden>
+        <div class="os-info-topo">
+          <div class="os-info-card">
+            <div class="os-info-card-icone" style="background:var(--accent-blue);" id="icone-info-data"></div>
+            <div><p class="os-info-card-titulo">Data de abertura</p><p class="os-info-card-valor" id="info-data-abertura"></p></div>
+          </div>
+          <div class="os-info-card">
+            <div class="os-info-card-icone" style="background:var(--accent-green);" id="icone-info-cliente"></div>
+            <div><p class="os-info-card-titulo">Cliente</p><p class="os-info-card-valor" id="info-cliente"></p></div>
+          </div>
+          <div class="os-info-card">
+            <div class="os-info-card-icone" style="background:var(--accent);" id="icone-info-aparelho"></div>
+            <div><p class="os-info-card-titulo">Aparelho</p><p class="os-info-card-valor" id="info-aparelho"></p></div>
+          </div>
+          <div class="os-info-card">
+            <div class="os-info-card-icone" style="background:var(--accent-purple);" id="icone-info-garantia"></div>
+            <div><p class="os-info-card-titulo">Garantia</p><p class="os-info-card-valor" id="info-garantia">Sem garantia registrada</p></div>
+          </div>
+        </div>
+
+        <div class="abas">
+          <button type="button" class="ativo" data-aba="info">Informações</button>
+          <button type="button" data-aba="diagnostico">Diagnóstico e Orçamento</button>
+          <button type="button" data-aba="historico">Histórico</button>
+          <button type="button" data-aba="fotos">Fotos</button>
+        </div>
+
+        <div class="layout-formulario">
+          <div>
+            <div data-aba-conteudo="info">
+              <div class="painel-form">
+                <p class="painel-form-titulo">Dados do cliente e aparelho</p>
+                <p><strong>Cliente:</strong> <span id="detalhe-cliente-nome"></span> <small id="detalhe-cliente-telefone" style="color:#6b7280;"></small></p>
+                <p><strong>Aparelho:</strong> <span id="detalhe-aparelho"></span></p>
+                <p><strong>IMEI:</strong> <span id="detalhe-imei"></span></p>
+                <p><strong>Condição de entrada:</strong> <span id="detalhe-condicao"></span></p>
+              </div>
+
+              <div class="painel-form">
+                <p class="painel-form-titulo">Checklist de entrada</p>
+                <div id="detalhe-checklist"></div>
+              </div>
+
+              <div class="painel-form">
+                <p class="painel-form-titulo">Termo de responsabilidade</p>
+                <div id="termo-existente" hidden>
+                  <p style="color:#15803d; font-size:13px;">✓ Termo assinado em <span id="termo-data"></span></p>
+                  <img id="termo-assinatura-preview" style="max-width:300px; border:1px solid #e5e7eb; border-radius:6px;" />
+                </div>
+                <div id="termo-novo">
+                  <p style="font-size:12px; color:#6b7280;">Peça ao cliente para assinar na tela abaixo, autorizando o serviço.</p>
+                  <canvas id="canvas-assinatura" class="assinatura-caixa"></canvas>
+                  <div style="display:flex; gap:10px; margin-top:8px;">
+                    <button type="button" class="botao secundario" id="btn-limpar-assinatura">Limpar</button>
+                    <button type="button" class="botao primario" id="btn-salvar-assinatura">Salvar assinatura</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div data-aba-conteudo="diagnostico" hidden>
+              <div class="painel-form">
+                <p class="painel-form-titulo">Diagnóstico</p>
+                <label class="campo largo">Defeito encontrado pelo técnico
+                  <textarea id="campo-defeito-diagnostico"></textarea>
+                </label>
+                <label class="campo" style="margin-top:10px;">Técnico responsável
+                  <select id="campo-tecnico-diagnostico"></select>
+                </label>
+                <button type="button" class="botao primario" style="margin-top:10px;" id="btn-salvar-diagnostico">Salvar diagnóstico</button>
+              </div>
+
+              <div class="painel-form">
+                <p class="painel-form-titulo">Novo orçamento</p>
+                <div class="grid-campos duas-colunas">
+                  <label class="campo">Peça / Produto
+                    <select id="campo-item-produto"></select>
+                  </label>
+                  <label class="campo">Valor (R$)
+                    <input type="number" id="campo-item-valor" step="0.01" min="0" />
+                  </label>
+                </div>
+                <button type="button" class="btn-link" id="btn-add-item-orcamento">+ Adicionar peça</button>
+                <table style="margin-top:8px;">
+                  <thead><tr><th>Peça</th><th>Valor</th><th></th></tr></thead>
+                  <tbody id="tabela-itens-orcamento"></tbody>
+                </table>
+                <label class="campo" style="margin-top:10px;">Valor da mão de obra (R$)
+                  <input type="number" id="campo-mao-obra" step="0.01" min="0" value="0" />
+                </label>
+                <button type="button" class="botao primario" style="margin-top:10px;" id="btn-criar-orcamento">Enviar orçamento para aprovação</button>
+                <div class="mensagem" id="mensagem-orcamento"></div>
+              </div>
+
+              <div class="painel-form">
+                <p class="painel-form-titulo">Orçamentos desta OS</p>
+                <div id="lista-orcamentos"></div>
+              </div>
+            </div>
+
+            <div data-aba-conteudo="historico" hidden>
+              <div class="painel-form">
+                <p class="painel-form-titulo">Histórico de status</p>
+                <div id="lista-historico"></div>
+              </div>
+              <div class="painel-form" id="painel-entrega-info" hidden>
+                <p class="painel-form-titulo">Entrega</p>
+                <p id="texto-entrega"></p>
+              </div>
+            </div>
+
+            <div data-aba-conteudo="fotos" hidden>
+              <div class="painel-form">
+                <p class="painel-form-titulo">Fotos do aparelho</p>
+                <div class="grid-fotos" id="grid-fotos-gestao">
+                  <div class="foto-add" id="btn-add-foto-gestao">+</div>
+                </div>
+                <input type="file" id="campo-foto-gestao" accept="image/png, image/jpeg" hidden multiple />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="painel-form">
+              <p class="painel-form-titulo">Status da OS</p>
+              <div class="timeline-status" id="timeline-status"></div>
+              <label class="campo" style="margin-top:12px;">Alterar status manualmente
+                <select id="campo-status-manual"></select>
+              </label>
+              <button type="button" class="botao secundario" style="margin-top:8px; width:100%; justify-content:center;" id="btn-atualizar-status">Atualizar status</button>
+            </div>
+
+            <div class="painel-form" id="painel-entrega" hidden>
+              <p class="painel-form-titulo">Entrega e garantia</p>
+              <label class="campo">Retirado por
+                <input type="text" id="campo-retirado-por" />
+              </label>
+              <button type="button" class="botao primario" style="margin-top:8px; width:100%; justify-content:center;" id="btn-registrar-entrega">Registrar entrega</button>
+
+              <label class="campo" style="margin-top:14px;">Garantia (dias)
+                <input type="number" id="campo-garantia-dias" min="0" value="90" />
+              </label>
+              <label class="campo" style="margin-top:8px;">Cobertura
+                <input type="text" id="campo-garantia-cobertura" placeholder="Ex: Somente a peça trocada" />
+              </label>
+              <button type="button" class="botao secundario" style="margin-top:8px; width:100%; justify-content:center;" id="btn-salvar-garantia">Salvar garantia</button>
+            </div>
+            <div class="mensagem" id="mensagem-gestao"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/shared/api.js"></script>
+  <script src="js/shared/layout.js"></script>
+  <script src="js/shared/os-status.js"></script>
+  <script src="js/pages/os-form.js"></script>
+</body>
+</html>

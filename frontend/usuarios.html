@@ -4,28 +4,74 @@
   <meta charset="UTF-8" />
   <title>Eletrotok - Usuários</title>
   <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/produto-form.css" />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <div id="app-sidebar"></div>
+
   <div id="app-conteudo">
     <div id="app-topbar"></div>
     <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
+
     <main id="app-main">
-      <div class="dashboard-cabecalho">
-        <div>
-          <h1>Usuários</h1>
-          <p>Login, perfis de acesso e vínculo com empresas.</p>
+      <div class="pagina-cabecalho">
+        <div class="pagina-cabecalho-titulo">
+          <div class="pagina-cabecalho-icone" id="icone-pagina"></div>
+          <div>
+            <h1>Usuários</h1>
+            <p>Login, perfis de acesso e vínculo com empresas.</p>
+          </div>
         </div>
       </div>
-      <div class="aviso-em-construcao">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
-        <p>Módulo em construção.</p>
-        <p>Em breve esta tela vai trazer cadastro de usuários, perfis (admin/caixa/técnico) e acesso por empresa.</p>
-      </div>
+
+      <section class="card">
+        <h2>Novo usuário</h2>
+        <form id="form-usuario">
+          <label>Nome
+            <input type="text" name="nome" required />
+          </label>
+          <label>Login
+            <input type="text" name="login" id="campo-login" required />
+          </label>
+          <label id="wrapper-senha">Senha
+            <input type="password" name="senha" id="campo-senha" />
+          </label>
+          <label>Perfil
+            <select name="perfil" required>
+              <option value="">Selecione</option>
+              <option value="admin">Administrador</option>
+              <option value="caixa">Operador de caixa</option>
+              <option value="tecnico">Técnico de assistência</option>
+            </select>
+          </label>
+          <div class="campo-largo">
+            <p style="margin-bottom:6px; font-size:13px;">Acesso às empresas</p>
+            <div id="lista-empresas-checkbox" style="display:flex; gap:16px; flex-wrap:wrap;"></div>
+          </div>
+          <div class="acoes">
+            <button type="submit">Salvar</button>
+            <button type="button" class="btn-link" id="btn-cancelar-edicao" hidden>Cancelar edição</button>
+          </div>
+          <div class="mensagem" id="mensagem-usuario"></div>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Usuários cadastrados</h2>
+        <table>
+          <thead>
+            <tr><th>Nome</th><th>Login</th><th>Perfil</th><th>Ativo</th><th></th></tr>
+          </thead>
+          <tbody id="tabela-usuarios"></tbody>
+        </table>
+      </section>
     </main>
   </div>
+
   <script src="js/shared/api.js"></script>
   <script src="js/shared/layout.js"></script>
   <script>initLayout('usuarios');</script>
+  <script src="js/pages/usuarios.js"></script>
 </body>
 </html>

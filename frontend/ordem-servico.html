@@ -4,28 +4,114 @@
   <meta charset="UTF-8" />
   <title>Eletrotok - Ordem de Serviço</title>
   <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/produto-form.css" />
+  <link rel="stylesheet" href="css/produtos-lista.css" />
+  <link rel="stylesheet" href="css/pdv.css" />
 </head>
 <body>
   <div id="app-sidebar"></div>
+
   <div id="app-conteudo">
     <div id="app-topbar"></div>
     <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
+
     <main id="app-main">
-      <div class="dashboard-cabecalho">
-        <div>
-          <h1>Ordem de Serviço</h1>
-          <p>Assistência técnica: entrada, diagnóstico, orçamento, acompanhamento e entrega.</p>
+      <div class="pagina-cabecalho">
+        <div class="pagina-cabecalho-titulo">
+          <div class="pagina-cabecalho-icone" id="icone-pagina"></div>
+          <div>
+            <h1>Ordem de Serviço</h1>
+            <p>Gerencie os atendimentos e reparos de aparelhos.</p>
+          </div>
+        </div>
+        <a href="os-form.html" class="botao primario"><span id="icone-nova"></span> Nova Ordem de Serviço</a>
+      </div>
+
+      <div class="cards-resumo">
+        <div class="card-resumo">
+          <div class="card-resumo-icone laranja" id="icone-total"></div>
+          <div>
+            <p class="card-resumo-titulo">Total de OS</p>
+            <p class="card-resumo-valor" id="valor-total">0</p>
+          </div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone azul" id="icone-andamento"></div>
+          <div>
+            <p class="card-resumo-titulo">Em andamento</p>
+            <p class="card-resumo-valor" id="valor-andamento">0</p>
+          </div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone verde" id="icone-concluidas"></div>
+          <div>
+            <p class="card-resumo-titulo">Entregues</p>
+            <p class="card-resumo-valor" id="valor-concluidas">0</p>
+          </div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone vermelho" id="icone-canceladas"></div>
+          <div>
+            <p class="card-resumo-titulo">Recusadas / Devolvidas</p>
+            <p class="card-resumo-valor" id="valor-canceladas">0</p>
+          </div>
         </div>
       </div>
-      <div class="aviso-em-construcao">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
-        <p>Módulo em construção.</p>
-        <p>Em breve esta tela vai trazer o fluxo completo de abertura de OS, checklist de entrada, termo de responsabilidade com assinatura, orçamento e status.</p>
+
+      <div class="painel-form">
+        <div class="barra-filtros">
+          <div class="campo-busca-lista">
+            <span id="icone-busca"></span>
+            <input type="text" id="campo-busca" placeholder="Buscar por cliente, aparelho, número da OS..." />
+          </div>
+          <label class="campo-filtro">Status
+            <select id="filtro-status">
+              <option value="">Todos</option>
+              <option value="recebido">Recebido</option>
+              <option value="em_diagnostico">Em diagnóstico</option>
+              <option value="aguardando_aprovacao">Aguardando aprovação</option>
+              <option value="aguardando_peca">Aguardando peça</option>
+              <option value="em_reparo">Em reparo</option>
+              <option value="pronto">Pronto</option>
+              <option value="entregue">Entregue</option>
+              <option value="recusado">Recusado</option>
+              <option value="devolvido_sem_reparo">Devolvido sem reparo</option>
+            </select>
+          </label>
+          <label class="campo-filtro">Técnico
+            <select id="filtro-tecnico"><option value="">Todos</option></select>
+          </label>
+          <button type="button" class="botao secundario" id="btn-limpar-filtros"><span id="icone-limpar"></span> Limpar</button>
+        </div>
+      </div>
+
+      <div class="pdv-layout">
+        <div class="painel-form">
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr><th>Nº OS</th><th>Cliente</th><th>Aparelho</th><th>Status</th><th>Data de entrada</th><th>Prazo</th><th></th></tr>
+              </thead>
+              <tbody id="tabela-os"></tbody>
+            </table>
+          </div>
+          <div class="rodape-tabela">
+            <span id="texto-paginacao"></span>
+            <div class="paginacao" id="paginacao"></div>
+          </div>
+        </div>
+
+        <div class="painel-form" id="painel-detalhes">
+          <p class="painel-form-titulo">Detalhes da OS</p>
+          <p style="color:#6b7280; font-size:13px;">Selecione uma OS na lista para ver os detalhes.</p>
+        </div>
       </div>
     </main>
   </div>
+
   <script src="js/shared/api.js"></script>
   <script src="js/shared/layout.js"></script>
-  <script>initLayout('os');</script>
+  <script src="js/shared/os-status.js"></script>
+  <script src="js/pages/os-lista.js"></script>
 </body>
 </html>

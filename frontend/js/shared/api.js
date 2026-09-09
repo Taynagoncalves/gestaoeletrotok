@@ -26,4 +26,5 @@ const api = {
   get: (path) => apiRequest(path),
   post: (path, body) => apiRequest(path, { method: 'POST', body: JSON.stringify(body) }),
   put: (path, body) => apiRequest(path, { method: 'PUT', body: JSON.stringify(body) }),
+  delete: (path) => apiRequest(path, { method: 'DELETE' }),
 };
