@@ -22,6 +22,7 @@ function renderizarIcones() {
   document.getElementById('icone-limpar').innerHTML = svgIcone('refresh-cw');
   document.getElementById('icone-novo').innerHTML = svgIcone('plus');
   document.getElementById('icone-importar').innerHTML = svgIcone('upload');
+  document.getElementById('icone-exportar').innerHTML = svgIcone('download');
 }
 
 function formatarMoeda(valor) {
@@ -204,6 +205,61 @@ btnLimparFiltros.addEventListener('click', () => {
   paginaAtual = 1;
   renderizarTabela();
 });
+
+function exportarProdutosCsv() {
+  const colunas = [
+    'Nome',
+    'Categoria',
+    'Subcategoria',
+    'Marca',
+    'Modelo',
+    'Referência interna',
+    'Código EAN',
+    'Tipo',
+    'Descrição',
+    'Estoque mínimo',
+    'Peso (kg)',
+    'Unidade de medida',
+    'Preço varejo',
+    'Preço atacado',
+    'Estoque total',
+    'Status',
+  ];
+
+  const linhas = produtosFiltrados().map((p) => [
+    p.nome,
+    p.categoria || '',
+    p.subcategoria || '',
+    p.marca || '',
+    p.modelo || '',
+    p.referencia_interna || '',
+    p.codigo_ean || '',
+    p.tipo,
+    p.descricao || '',
+    p.estoque_minimo,
+    p.peso_kg || '',
+    p.unidade_medida || '',
+    p.preco_varejo ?? '',
+    p.preco_atacado ?? '',
+    p.estoque_total,
+    p.ativo ? 'Ativo' : 'Inativo',
+  ]);
+
+  const linhasCsv = [colunas, ...linhas]
+    .map((linha) => linha.map((valor) => `"${String(valor).replace(/"/g, '""')}"`).join(';'))
+    .join('\r\n');
+
+  // BOM UTF-8 na frente para o Excel abrir acentos corretamente.
+  const blob = new Blob(['﻿' + linhasCsv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `produtos-${new Date().toISOString().slice(0, 10)}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('btn-exportar-produtos').addEventListener('click', exportarProdutosCsv);
 
 renderizarIcones();
 carregarProdutos().catch((erro) => {
