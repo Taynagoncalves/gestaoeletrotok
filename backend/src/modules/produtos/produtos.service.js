@@ -13,8 +13,8 @@ function validar(dados) {
   }
 }
 
-async function listar() {
-  return repository.listar();
+async function listar(empresaId) {
+  return repository.listar(empresaId);
 }
 
 async function buscarPorId(id) {

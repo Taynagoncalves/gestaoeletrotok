@@ -2,9 +2,11 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Eletrotok - PDV</title>
+  <title>Eletrotok - Vendas (PDV)</title>
   <link rel="stylesheet" href="css/layout.css" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/produto-form.css" />
+  <link rel="stylesheet" href="css/produtos-lista.css" />
+  <link rel="stylesheet" href="css/pdv.css" />
 </head>
 <body>
   <div id="app-sidebar"></div>
@@ -14,96 +16,116 @@
     <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
 
     <main id="app-main">
-    <section class="card">
-      <h2>Frente de caixa</h2>
-      <form onsubmit="return false" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-        <label>Empresa
-          <select id="select-empresa"></select>
-        </label>
-        <label>Cliente (opcional)
-          <select id="select-cliente">
-            <option value="">Consumidor não identificado</option>
-          </select>
-        </label>
-      </form>
-    </section>
+      <div class="pagina-cabecalho">
+        <div class="pagina-cabecalho-titulo">
+          <div class="pagina-cabecalho-icone" id="icone-pagina"></div>
+          <div>
+            <h1>Vendas (PDV)</h1>
+            <p>Acompanhe todas as vendas da sua loja.</p>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="pdv-toggle-canal">
+            <button type="button" class="ativo" data-periodo="hoje">Hoje</button>
+            <button type="button" data-periodo="7">7 dias</button>
+            <button type="button" data-periodo="30">30 dias</button>
+          </div>
+          <a href="venda-nova.html" class="botao primario"><span id="icone-nova-venda"></span> Nova Venda (F10)</a>
+        </div>
+      </div>
 
-    <section class="card">
-      <h2>Adicionar item</h2>
-      <form id="form-add-item" style="display:grid; grid-template-columns: 2fr 1fr 1fr auto; gap:12px; align-items:end;">
-        <label>Produto
-          <select id="select-produto" required></select>
-        </label>
-        <label id="wrapper-imei">Item (IMEI)
-          <select id="select-item-imei"></select>
-        </label>
-        <label id="wrapper-quantidade">Quantidade
-          <input type="number" id="campo-quantidade" min="1" value="1" />
-        </label>
-        <button type="submit">Adicionar</button>
-      </form>
-      <div class="mensagem" id="mensagem-item"></div>
-    </section>
+      <div class="cards-resumo">
+        <div class="card-resumo">
+          <div class="card-resumo-icone verde" id="icone-total"></div>
+          <div>
+            <p class="card-resumo-titulo">Total de vendas</p>
+            <p class="card-resumo-valor" id="valor-total-vendas">R$ 0,00</p>
+            <span id="qtd-vendas" style="font-size:12px; color:#6b7280;"></span>
+          </div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone azul" id="icone-ticket"></div>
+          <div>
+            <p class="card-resumo-titulo">Ticket médio</p>
+            <p class="card-resumo-valor" id="valor-ticket-medio">R$ 0,00</p>
+          </div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone verde" id="icone-dinheiro"></div>
+          <div>
+            <p class="card-resumo-titulo">Vendas em dinheiro</p>
+            <p class="card-resumo-valor" id="valor-dinheiro">R$ 0,00</p>
+          </div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone roxo" id="icone-cartao"></div>
+          <div>
+            <p class="card-resumo-titulo">Vendas no cartão</p>
+            <p class="card-resumo-valor" id="valor-cartao">R$ 0,00</p>
+          </div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone laranja" id="icone-pix"></div>
+          <div>
+            <p class="card-resumo-titulo">Vendas no PIX</p>
+            <p class="card-resumo-valor" id="valor-pix">R$ 0,00</p>
+          </div>
+        </div>
+      </div>
 
-    <section class="card">
-      <h2>Carrinho</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Produto</th>
-            <th>IMEI</th>
-            <th>Qtd</th>
-            <th>Preço unit.</th>
-            <th>Subtotal</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="tabela-carrinho"></tbody>
-      </table>
-      <p><strong>Total: R$ <span id="total-carrinho">0,00</span></strong></p>
-    </section>
+      <div class="painel-form">
+        <div class="abas" style="margin-bottom:14px;">
+          <button type="button" class="ativo" data-status-tab="">Todas as vendas</button>
+          <button type="button" data-status-tab="presencial">Venda presencial</button>
+          <button type="button" data-status-tab="online">Venda online</button>
+          <button type="button" data-status-tab="orcamento">Orçamentos</button>
+          <button type="button" data-status-tab="cancelada">Vendas canceladas</button>
+        </div>
 
-    <section class="card">
-      <h2>Pagamento</h2>
-      <form id="form-pagamento" style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:12px; align-items:end;">
-        <label>Forma
-          <select id="campo-forma">
-            <option value="dinheiro">Dinheiro</option>
-            <option value="debito">Débito</option>
-            <option value="credito">Crédito</option>
-            <option value="pix">PIX</option>
-          </select>
-        </label>
-        <label id="wrapper-parcelas" hidden>Parcelas
-          <input type="number" id="campo-parcelas" min="1" value="1" />
-        </label>
-        <label>Valor (R$)
-          <input type="number" id="campo-valor-pagamento" step="0.01" min="0" />
-        </label>
-        <button type="submit">Adicionar pagamento</button>
-      </form>
-      <table>
-        <thead>
-          <tr><th>Forma</th><th>Parcelas</th><th>Valor</th><th></th></tr>
-        </thead>
-        <tbody id="tabela-pagamentos"></tbody>
-      </table>
-      <p>Total pago: R$ <span id="total-pago">0,00</span></p>
-      <button type="button" id="btn-finalizar">Finalizar venda</button>
-      <div class="mensagem" id="mensagem-venda"></div>
-    </section>
+        <div class="barra-filtros">
+          <div class="campo-busca-lista">
+            <span id="icone-busca"></span>
+            <input type="text" id="campo-busca" placeholder="Buscar por nº, cliente..." />
+          </div>
+          <label class="campo-filtro">Forma de pagamento
+            <select id="filtro-forma">
+              <option value="">Todas</option>
+              <option value="dinheiro">Dinheiro</option>
+              <option value="debito">Débito</option>
+              <option value="credito">Crédito</option>
+              <option value="pix">PIX</option>
+            </select>
+          </label>
+          <button type="button" class="botao secundario" id="btn-limpar-filtros"><span id="icone-limpar"></span> Limpar</button>
+        </div>
+      </div>
 
-    <section class="card" id="secao-comprovante" hidden>
-      <h2>Comprovante</h2>
-      <pre id="comprovante" style="white-space:pre-wrap; font-family: monospace;"></pre>
-      <button type="button" id="btn-nova-venda">Nova venda</button>
-    </section>
+      <div class="pdv-layout">
+        <div class="painel-form">
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr><th>Nº venda</th><th>Data e hora</th><th>Cliente</th><th>Tipo</th><th>Pagamento</th><th>Total</th><th>Status</th><th></th></tr>
+              </thead>
+              <tbody id="tabela-vendas"></tbody>
+            </table>
+          </div>
+          <div class="rodape-tabela">
+            <span id="texto-paginacao"></span>
+            <div class="paginacao" id="paginacao"></div>
+          </div>
+        </div>
+
+        <div class="painel-form" id="painel-detalhes">
+          <p class="painel-form-titulo">Detalhes da venda</p>
+          <p style="color:#6b7280; font-size:13px;">Selecione uma venda na lista para ver os detalhes.</p>
+        </div>
+      </div>
     </main>
   </div>
 
   <script src="js/shared/api.js"></script>
   <script src="js/shared/layout.js"></script>
-  <script>initLayout('pdv');</script>
   <script src="js/pages/pdv.js"></script>
 </body>
 </html>

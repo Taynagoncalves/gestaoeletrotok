@@ -1,6 +1,6 @@
 const db = require('../../config/database');
 
-async function listar() {
+async function listar(empresaId) {
   const [rows] = await db.query(
     `SELECT p.*,
       (SELECT tp.preco_venda FROM tabela_precos tp JOIN empresas e ON e.id = tp.empresa_id
@@ -10,9 +10,15 @@ async function listar() {
       (CASE WHEN p.tipo = 'celular'
         THEN (SELECT COUNT(*) FROM produto_itens pi WHERE pi.produto_id = p.id AND pi.status = 'em_estoque')
         ELSE COALESCE((SELECT SUM(es.quantidade) FROM estoque_saldos es WHERE es.produto_id = p.id), 0)
-      END) AS estoque_total
+      END) AS estoque_total,
+      ${empresaId ? `(SELECT tp.preco_venda FROM tabela_precos tp WHERE tp.produto_id = p.id AND tp.empresa_id = ?) AS preco_empresa,
+      (CASE WHEN p.tipo = 'celular'
+        THEN (SELECT COUNT(*) FROM produto_itens pi WHERE pi.produto_id = p.id AND pi.empresa_id = ? AND pi.status = 'em_estoque')
+        ELSE COALESCE((SELECT es.quantidade FROM estoque_saldos es WHERE es.produto_id = p.id AND es.empresa_id = ?), 0)
+      END) AS estoque_empresa` : 'NULL AS preco_empresa, NULL AS estoque_empresa'}
     FROM produtos p
-    ORDER BY p.nome`
+    ORDER BY p.nome`,
+    empresaId ? [empresaId, empresaId, empresaId] : []
   );
   return rows;
 }

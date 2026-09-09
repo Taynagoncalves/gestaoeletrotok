@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Eletrotok - Nova Venda</title>
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/produto-form.css" />
+  <link rel="stylesheet" href="css/produtos-lista.css" />
+  <link rel="stylesheet" href="css/entrada-estoque.css" />
+  <link rel="stylesheet" href="css/pdv.css" />
+</head>
+<body>
+  <div id="app-sidebar"></div>
+
+  <div id="app-conteudo">
+    <div id="app-topbar"></div>
+    <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
+
+    <main id="app-main">
+      <div class="pagina-cabecalho">
+        <div class="pagina-cabecalho-titulo">
+          <div class="pagina-cabecalho-icone" id="icone-pagina"></div>
+          <div>
+            <h1>Nova Venda (PDV)</h1>
+            <p>Selecione os produtos e finalize a venda.</p>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="pdv-toggle-canal">
+            <button type="button" id="btn-canal-presencial" class="ativo">Venda presencial</button>
+            <button type="button" id="btn-canal-online">Venda online</button>
+          </div>
+          <label style="font-size:12px; color:#6b7280;">Empresa / Loja
+            <select id="select-empresa" style="display:block; margin-top:4px; padding:8px; border:1px solid #e5e7eb; border-radius:6px;"></select>
+          </label>
+        </div>
+      </div>
+
+      <div class="pdv-layout">
+        <div>
+          <div class="pdv-categorias" id="categorias-pdv"></div>
+          <div class="grid-produtos-pdv" id="grid-produtos"></div>
+        </div>
+
+        <div>
+          <div class="painel-form">
+            <div class="pdv-lateral-abas">
+              <button type="button" data-modo="cliente" class="ativo">Cliente</button>
+              <button type="button" data-modo="avulsa">Venda avulsa</button>
+            </div>
+
+            <div id="bloco-cliente">
+              <input type="text" id="campo-buscar-cliente" placeholder="Buscar cliente por nome, CPF ou telefone..." autocomplete="off" />
+              <div id="resultado-busca-cliente" class="lista-sugestoes" hidden></div>
+              <div id="cliente-selecionado-box" class="produto-selecionado-box" hidden>
+                <span id="icone-cliente-sel"></span>
+                <div>
+                  <div class="celula-produto-nome" id="nome-cliente-selecionado"></div>
+                  <div class="celula-produto-sub" id="sub-cliente-selecionado"></div>
+                </div>
+                <button type="button" class="btn-link" id="btn-trocar-cliente">Trocar</button>
+              </div>
+              <button type="button" class="btn-link" id="btn-mostrar-novo-cliente">+ Cadastrar novo cliente</button>
+              <div class="form-cliente-rapido" id="form-cliente-rapido" hidden>
+                <label class="campo">Nome *<input type="text" id="novo-cliente-nome" /></label>
+                <label class="campo" style="margin-top:8px;">Telefone<input type="text" id="novo-cliente-telefone" /></label>
+                <button type="button" class="botao primario" style="margin-top:8px; width:100%; justify-content:center;" id="btn-salvar-novo-cliente">Salvar cliente</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="painel-form">
+            <div class="pdv-carrinho-cabecalho">
+              <p class="painel-form-titulo" style="margin:0;">Itens da venda (<span id="contador-itens">0</span>)</p>
+              <button type="button" class="btn-link" id="btn-limpar-carrinho">Limpar carrinho</button>
+            </div>
+            <div id="lista-carrinho"></div>
+
+            <div class="grid-campos duas-colunas" style="margin-top:12px;">
+              <label class="campo">Desconto (R$)
+                <input type="number" id="campo-desconto" min="0" step="0.01" value="0" />
+              </label>
+            </div>
+
+            <div style="margin-top:10px;">
+              <div class="pdv-resumo-linha"><span>Subtotal</span><span id="valor-subtotal">R$ 0,00</span></div>
+              <div class="pdv-resumo-linha"><span>Desconto</span><span id="valor-desconto">R$ 0,00</span></div>
+              <div class="pdv-resumo-linha total"><span>Total</span><span id="valor-total">R$ 0,00</span></div>
+            </div>
+
+            <button type="button" class="botao primario pdv-btn-finalizar" id="btn-finalizar"><span id="icone-finalizar"></span> Finalizar Venda (F10)</button>
+            <button type="button" class="botao secundario pdv-btn-orcamento" id="btn-salvar-orcamento">Salvar Orçamento</button>
+            <div class="mensagem" id="mensagem-venda"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="overlay-modal" id="modal-pagamento" hidden>
+    <div class="modal-caixa">
+      <h3>Pagamento</h3>
+      <div class="grid-campos duas-colunas">
+        <label class="campo">Forma
+          <select id="modal-forma-pagamento">
+            <option value="dinheiro">Dinheiro</option>
+            <option value="debito">Débito</option>
+            <option value="credito">Crédito</option>
+            <option value="pix">PIX</option>
+          </select>
+        </label>
+        <label class="campo" id="modal-wrapper-parcelas" hidden>Parcelas
+          <input type="number" id="modal-parcelas" min="1" value="1" />
+        </label>
+      </div>
+      <label class="campo" style="margin-top:10px;">Valor (R$)
+        <input type="number" id="modal-valor-pagamento" step="0.01" min="0" />
+      </label>
+      <button type="button" class="botao secundario" style="margin-top:10px; width:100%; justify-content:center;" id="modal-btn-adicionar-pagamento">Adicionar pagamento</button>
+
+      <table style="margin-top:12px;">
+        <thead><tr><th>Forma</th><th>Valor</th><th></th></tr></thead>
+        <tbody id="modal-tabela-pagamentos"></tbody>
+      </table>
+      <p>Total pago: <strong id="modal-total-pago">R$ 0,00</strong> / <span id="modal-total-devido">R$ 0,00</span></p>
+
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <button type="button" class="botao secundario" id="modal-btn-cancelar" style="flex:1; justify-content:center;">Cancelar</button>
+        <button type="button" class="botao primario" id="modal-btn-confirmar" style="flex:1; justify-content:center;">Confirmar venda</button>
+      </div>
+      <div class="mensagem" id="modal-mensagem"></div>
+    </div>
+  </div>
+
+  <script src="js/shared/api.js"></script>
+  <script src="js/shared/layout.js"></script>
+  <script>initLayout('pdv');</script>
+  <script src="js/pages/venda-nova.js"></script>
+</body>
+</html>

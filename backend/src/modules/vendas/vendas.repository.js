@@ -1,12 +1,16 @@
 const db = require('../../config/database');
 
-async function inserirVenda(connection, { empresa_id, cliente_id, usuario_id, total }) {
+async function inserirVenda(connection, { empresa_id, cliente_id, usuario_id, total, canal, desconto, status }) {
   const [result] = await connection.query(
-    `INSERT INTO vendas (empresa_id, cliente_id, usuario_id, total)
-     VALUES (?, ?, ?, ?)`,
-    [empresa_id, cliente_id || null, usuario_id || null, total]
+    `INSERT INTO vendas (empresa_id, cliente_id, usuario_id, total, canal, desconto, status)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [empresa_id, cliente_id || null, usuario_id || null, total, canal || 'presencial', desconto || 0, status || 'concluida']
   );
   return result.insertId;
+}
+
+async function atualizarStatus(id, status) {
+  await db.query('UPDATE vendas SET status = ? WHERE id = ?', [status, id]);
 }
 
 async function inserirItem(connection, { venda_id, produto_id, produto_item_id, quantidade, preco_unitario, custo_unitario_snapshot }) {
@@ -51,7 +55,7 @@ async function buscarPorId(id) {
   return { ...venda, itens, pagamentos };
 }
 
-async function listar(empresaId, { de, ate } = {}) {
+async function listar(empresaId, { de, ate, status, canal } = {}) {
   const condicoes = ['v.empresa_id = ?'];
   const params = [empresaId];
 
@@ -63,9 +67,18 @@ async function listar(empresaId, { de, ate } = {}) {
     condicoes.push('v.data <= ?');
     params.push(ate);
   }
+  if (status) {
+    condicoes.push('v.status = ?');
+    params.push(status);
+  }
+  if (canal) {
+    condicoes.push('v.canal = ?');
+    params.push(canal);
+  }
 
   const [rows] = await db.query(
-    `SELECT v.id, v.data, v.total, v.status, v.cliente_id, c.nome AS cliente_nome
+    `SELECT v.id, v.data, v.total, v.desconto, v.status, v.canal, v.cliente_id, c.nome AS cliente_nome,
+            (SELECT GROUP_CONCAT(DISTINCT forma) FROM venda_pagamentos WHERE venda_id = v.id) AS formas_pagamento
      FROM vendas v
      LEFT JOIN clientes c ON c.id = v.cliente_id
      WHERE ${condicoes.join(' AND ')}
@@ -104,12 +117,34 @@ async function totalPorDia(empresaId, dias) {
   return rows;
 }
 
+async function resumoPeriodo(empresaId, de, ate) {
+  const [[totais]] = await db.query(
+    `SELECT COALESCE(SUM(total), 0) AS total, COUNT(*) AS quantidade
+     FROM vendas
+     WHERE empresa_id = ? AND status = 'concluida' AND data BETWEEN ? AND ?`,
+    [empresaId, de, ate]
+  );
+
+  const [porForma] = await db.query(
+    `SELECT vp.forma, COALESCE(SUM(vp.valor), 0) AS total
+     FROM venda_pagamentos vp
+     JOIN vendas v ON v.id = vp.venda_id
+     WHERE v.empresa_id = ? AND v.status = 'concluida' AND v.data BETWEEN ? AND ?
+     GROUP BY vp.forma`,
+    [empresaId, de, ate]
+  );
+
+  return { ...totais, por_forma: porForma };
+}
+
 module.exports = {
   inserirVenda,
   inserirItem,
   inserirPagamento,
   buscarPorId,
+  atualizarStatus,
   listar,
   produtosMaisVendidos,
   totalPorDia,
+  resumoPeriodo,
 };

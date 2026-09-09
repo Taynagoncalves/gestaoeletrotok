@@ -1,7 +1,7 @@
 const service = require('./produtos.service');
 
 async function listar(req, res) {
-  const produtos = await service.listar();
+  const produtos = await service.listar(req.query.empresa_id);
   res.json(produtos);
 }
 
