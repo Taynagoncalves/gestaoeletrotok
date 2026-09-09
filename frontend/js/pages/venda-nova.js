@@ -28,18 +28,14 @@ const btnFinalizar = document.getElementById('btn-finalizar');
 const btnSalvarOrcamento = document.getElementById('btn-salvar-orcamento');
 const mensagemVenda = document.getElementById('mensagem-venda');
 
-const modalPagamento = document.getElementById('modal-pagamento');
-const modalFormaPagamento = document.getElementById('modal-forma-pagamento');
-const modalWrapperParcelas = document.getElementById('modal-wrapper-parcelas');
-const modalParcelas = document.getElementById('modal-parcelas');
-const modalValorPagamento = document.getElementById('modal-valor-pagamento');
-const modalBtnAdicionarPagamento = document.getElementById('modal-btn-adicionar-pagamento');
-const modalTabelaPagamentos = document.getElementById('modal-tabela-pagamentos');
-const modalTotalPagoEl = document.getElementById('modal-total-pago');
-const modalTotalDevidoEl = document.getElementById('modal-total-devido');
-const modalBtnCancelar = document.getElementById('modal-btn-cancelar');
-const modalBtnConfirmar = document.getElementById('modal-btn-confirmar');
-const modalMensagem = document.getElementById('modal-mensagem');
+const pagamentoForma = document.getElementById('pagamento-forma');
+const pagamentoWrapperParcelas = document.getElementById('pagamento-wrapper-parcelas');
+const pagamentoParcelas = document.getElementById('pagamento-parcelas');
+const pagamentoValor = document.getElementById('pagamento-valor');
+const btnAdicionarPagamento = document.getElementById('btn-adicionar-pagamento');
+const tabelaPagamentos = document.getElementById('tabela-pagamentos');
+const totalPagoEl = document.getElementById('total-pago');
+const totalDevidoEl = document.getElementById('total-devido');
 
 let produtos = [];
 let clientes = [];
@@ -48,7 +44,7 @@ let categoriaAtiva = '';
 let modoCliente = 'cliente';
 let clienteSelecionado = null;
 let canal = 'presencial';
-let pagamentosModal = [];
+let pagamentos = [];
 
 function renderizarIcones() {
   document.getElementById('icone-pagina').innerHTML = svgIcone('cart');
@@ -332,6 +328,7 @@ function atualizarResumo() {
   valorSubtotalEl.textContent = formatarMoeda(subtotal);
   valorDescontoEl.textContent = formatarMoeda(desconto);
   valorTotalEl.textContent = formatarMoeda(subtotal - desconto);
+  renderizarPagamentos();
 }
 
 campoDesconto.addEventListener('input', atualizarResumo);
@@ -372,68 +369,54 @@ btnSalvarOrcamento.addEventListener('click', async () => {
   }
 });
 
-// ---------- Finalizar venda (modal de pagamento) ----------
-function abrirModalPagamento() {
-  if (carrinho.length === 0) {
-    mostrarMensagem('Carrinho vazio.', 'erro');
-    return;
-  }
-  pagamentosModal = [];
-  renderizarPagamentosModal();
-  modalValorPagamento.value = (subtotalCarrinho() - (Number(campoDesconto.value) || 0)).toFixed(2);
-  modalMensagem.textContent = '';
-  modalPagamento.hidden = false;
-}
-
-btnFinalizar.addEventListener('click', abrirModalPagamento);
-document.addEventListener('keydown', (evento) => {
-  if (evento.key === 'F10') {
-    evento.preventDefault();
-    abrirModalPagamento();
-  }
+// ---------- Pagamento (inline, sem modal) ----------
+pagamentoForma.addEventListener('change', () => {
+  pagamentoWrapperParcelas.hidden = pagamentoForma.value !== 'credito';
 });
 
-modalFormaPagamento.addEventListener('change', () => {
-  modalWrapperParcelas.hidden = modalFormaPagamento.value !== 'credito';
-});
-
-modalBtnAdicionarPagamento.addEventListener('click', () => {
-  const valor = Number(modalValorPagamento.value);
+btnAdicionarPagamento.addEventListener('click', () => {
+  const valor = Number(pagamentoValor.value);
   if (!valor || valor <= 0) return;
-  pagamentosModal.push({
-    forma: modalFormaPagamento.value,
-    parcelas: modalFormaPagamento.value === 'credito' ? Number(modalParcelas.value) : 1,
+  pagamentos.push({
+    forma: pagamentoForma.value,
+    parcelas: pagamentoForma.value === 'credito' ? Number(pagamentoParcelas.value) : 1,
     valor,
   });
-  modalValorPagamento.value = '';
-  renderizarPagamentosModal();
+  pagamentoValor.value = '';
+  renderizarPagamentos();
 });
 
-function renderizarPagamentosModal() {
-  modalTabelaPagamentos.innerHTML = pagamentosModal
+function renderizarPagamentos() {
+  tabelaPagamentos.innerHTML = pagamentos
     .map(
       (p, indice) => `<tr><td>${p.forma}</td><td>${formatarMoeda(p.valor)}</td><td><button type="button" class="btn-link" data-indice="${indice}">x</button></td></tr>`
     )
     .join('');
 
-  modalTabelaPagamentos.querySelectorAll('button').forEach((botao) => {
+  tabelaPagamentos.querySelectorAll('button').forEach((botao) => {
     botao.addEventListener('click', () => {
-      pagamentosModal.splice(Number(botao.dataset.indice), 1);
-      renderizarPagamentosModal();
+      pagamentos.splice(Number(botao.dataset.indice), 1);
+      renderizarPagamentos();
     });
   });
 
-  const totalPago = pagamentosModal.reduce((soma, p) => soma + p.valor, 0);
+  const totalPago = pagamentos.reduce((soma, p) => soma + p.valor, 0);
   const totalDevido = subtotalCarrinho() - (Number(campoDesconto.value) || 0);
-  modalTotalPagoEl.textContent = formatarMoeda(totalPago);
-  modalTotalDevidoEl.textContent = formatarMoeda(totalDevido);
+  totalPagoEl.textContent = formatarMoeda(totalPago);
+  totalDevidoEl.textContent = formatarMoeda(totalDevido);
 }
 
-modalBtnCancelar.addEventListener('click', () => {
-  modalPagamento.hidden = true;
-});
+// ---------- Finalizar venda ----------
+async function finalizarVenda() {
+  if (carrinho.length === 0) {
+    mostrarMensagem('Carrinho vazio.', 'erro');
+    return;
+  }
+  if (pagamentos.length === 0) {
+    mostrarMensagem('Informe ao menos uma forma de pagamento.', 'erro');
+    return;
+  }
 
-modalBtnConfirmar.addEventListener('click', async () => {
   try {
     const venda = await api.post('/vendas', {
       empresa_id: Number(selectEmpresa.value),
@@ -441,19 +424,27 @@ modalBtnConfirmar.addEventListener('click', async () => {
       canal,
       desconto: Number(campoDesconto.value) || 0,
       itens: montarPayloadItens(),
-      pagamentos: pagamentosModal,
+      pagamentos,
     });
-    modalPagamento.hidden = true;
     mostrarMensagem(`Venda #${venda.id} concluída com sucesso.`, 'sucesso');
     carrinho = [];
+    pagamentos = [];
     campoDesconto.value = 0;
     clienteSelecionado = null;
     clienteSelecionadoBox.hidden = true;
+    renderizarPagamentos();
     renderizarCarrinho();
     await carregarProdutos();
   } catch (erro) {
-    modalMensagem.textContent = erro.message;
-    modalMensagem.className = 'mensagem erro';
+    mostrarMensagem(erro.message, 'erro');
+  }
+}
+
+btnFinalizar.addEventListener('click', finalizarVenda);
+document.addEventListener('keydown', (evento) => {
+  if (evento.key === 'F10') {
+    evento.preventDefault();
+    finalizarVenda();
   }
 });
 

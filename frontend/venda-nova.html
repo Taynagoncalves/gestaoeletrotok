@@ -88,6 +88,33 @@
               <div class="pdv-resumo-linha total"><span>Total</span><span id="valor-total">R$ 0,00</span></div>
             </div>
 
+            <div class="pdv-pagamento-bloco" style="margin-top:14px; border-top:1px solid var(--border); padding-top:12px;">
+              <p class="painel-form-titulo" style="margin:0 0 8px;">Pagamento</p>
+              <div class="grid-campos duas-colunas">
+                <label class="campo">Forma
+                  <select id="pagamento-forma">
+                    <option value="dinheiro">Dinheiro</option>
+                    <option value="debito">Débito</option>
+                    <option value="credito">Crédito</option>
+                    <option value="pix">PIX</option>
+                  </select>
+                </label>
+                <label class="campo" id="pagamento-wrapper-parcelas" hidden>Parcelas
+                  <input type="number" id="pagamento-parcelas" min="1" value="1" />
+                </label>
+              </div>
+              <label class="campo" style="margin-top:8px;">Valor (R$)
+                <input type="number" id="pagamento-valor" step="0.01" min="0" />
+              </label>
+              <button type="button" class="botao secundario" style="margin-top:8px; width:100%; justify-content:center;" id="btn-adicionar-pagamento">Adicionar pagamento</button>
+
+              <table style="margin-top:10px;">
+                <thead><tr><th>Forma</th><th>Valor</th><th></th></tr></thead>
+                <tbody id="tabela-pagamentos"></tbody>
+              </table>
+              <p style="margin-top:6px; font-size:13px;">Pago: <strong id="total-pago">R$ 0,00</strong> / Falta: <span id="total-devido">R$ 0,00</span></p>
+            </div>
+
             <button type="button" class="botao primario pdv-btn-finalizar" id="btn-finalizar"><span id="icone-finalizar"></span> Finalizar Venda (F10)</button>
             <button type="button" class="botao secundario pdv-btn-orcamento" id="btn-salvar-orcamento">Salvar Orçamento</button>
             <div class="mensagem" id="mensagem-venda"></div>
@@ -95,41 +122,6 @@
         </div>
       </div>
     </main>
-  </div>
-
-  <div class="overlay-modal" id="modal-pagamento" hidden>
-    <div class="modal-caixa">
-      <h3>Pagamento</h3>
-      <div class="grid-campos duas-colunas">
-        <label class="campo">Forma
-          <select id="modal-forma-pagamento">
-            <option value="dinheiro">Dinheiro</option>
-            <option value="debito">Débito</option>
-            <option value="credito">Crédito</option>
-            <option value="pix">PIX</option>
-          </select>
-        </label>
-        <label class="campo" id="modal-wrapper-parcelas" hidden>Parcelas
-          <input type="number" id="modal-parcelas" min="1" value="1" />
-        </label>
-      </div>
-      <label class="campo" style="margin-top:10px;">Valor (R$)
-        <input type="number" id="modal-valor-pagamento" step="0.01" min="0" />
-      </label>
-      <button type="button" class="botao secundario" style="margin-top:10px; width:100%; justify-content:center;" id="modal-btn-adicionar-pagamento">Adicionar pagamento</button>
-
-      <table style="margin-top:12px;">
-        <thead><tr><th>Forma</th><th>Valor</th><th></th></tr></thead>
-        <tbody id="modal-tabela-pagamentos"></tbody>
-      </table>
-      <p>Total pago: <strong id="modal-total-pago">R$ 0,00</strong> / <span id="modal-total-devido">R$ 0,00</span></p>
-
-      <div style="display:flex; gap:10px; margin-top:14px;">
-        <button type="button" class="botao secundario" id="modal-btn-cancelar" style="flex:1; justify-content:center;">Cancelar</button>
-        <button type="button" class="botao primario" id="modal-btn-confirmar" style="flex:1; justify-content:center;">Confirmar venda</button>
-      </div>
-      <div class="mensagem" id="modal-mensagem"></div>
-    </div>
   </div>
 
   <script src="js/shared/api.js"></script>
