@@ -12,11 +12,13 @@ const rotuloStatus = document.getElementById('rotulo-status');
 const campoFornecedor = document.getElementById('campo-fornecedor');
 const avisoTipoEstoque = document.getElementById('aviso-tipo-estoque');
 const blocoSaldoEmpresas = document.getElementById('bloco-saldo-empresas');
+const blocoEstoqueInicial = document.getElementById('bloco-estoque-inicial');
 const blocoPrecos = document.getElementById('bloco-precos');
 const mensagemPrecos = document.getElementById('mensagem-precos');
 
 let produtoId = new URLSearchParams(window.location.search).get('id');
 let imagemBase64 = null;
+let empresasCache = [];
 
 function renderizarIcones() {
   document.getElementById('icone-pagina').innerHTML = svgIcone('box');
@@ -58,16 +60,56 @@ campoDescricao.addEventListener('input', () => {
 campoTipo.addEventListener('change', () => {
   campoPossuiImei.checked = campoTipo.value === 'celular';
   atualizarAvisoTipoEstoque();
+  atualizarBlocoEstoqueInicial();
 });
 
 function atualizarAvisoTipoEstoque() {
   if (campoTipo.value === 'celular') {
-    avisoTipoEstoque.textContent = 'Este produto controla estoque por IMEI: cada unidade é lançada individualmente na tela de Entrada de Estoque.';
+    avisoTipoEstoque.innerHTML = produtoId
+      ? 'Este produto controla estoque por IMEI: cada unidade é lançada individualmente na tela <a href="entrada-estoque.html">Entrada de Estoque</a>.'
+      : 'Este produto controla estoque por IMEI. Salve o produto primeiro; depois lance cada unidade (IMEI) na tela <a href="entrada-estoque.html">Entrada de Estoque</a>.';
   } else if (campoTipo.value) {
-    avisoTipoEstoque.textContent = 'Este produto controla estoque por quantidade (saldo agregado por empresa).';
+    avisoTipoEstoque.textContent = 'Este produto controla estoque por quantidade (saldo agregado por empresa). Informe a quantidade inicial de cada loja abaixo.';
   } else {
     avisoTipoEstoque.textContent = 'Selecione o tipo de produto na aba "Informações principais" para ver como o estoque é controlado.';
   }
+}
+
+// ---------- Estoque inicial (só na criação, para produtos por quantidade) ----------
+function renderizarTabelaEstoqueInicial() {
+  const corpo = document.getElementById('tabela-estoque-inicial');
+  corpo.innerHTML = empresasCache
+    .map(
+      (empresa) => `
+        <tr>
+          <td>${empresa.razao_social} (${empresa.tipo})</td>
+          <td><input type="number" min="0" step="1" value="0" data-empresa-id="${empresa.id}" class="campo-qtd-estoque-inicial" /></td>
+          <td><input type="number" min="0" step="0.01" data-empresa-id="${empresa.id}" class="campo-custo-estoque-inicial" /></td>
+        </tr>
+      `
+    )
+    .join('');
+}
+
+function atualizarBlocoEstoqueInicial() {
+  const podeMostrar = !produtoId && campoTipo.value && campoTipo.value !== 'celular';
+  blocoEstoqueInicial.hidden = !podeMostrar;
+}
+
+function coletarEstoqueInicial() {
+  const linhas = [];
+  document.querySelectorAll('.campo-qtd-estoque-inicial').forEach((input) => {
+    const quantidade = Number(input.value) || 0;
+    if (quantidade <= 0) return;
+    const empresaId = input.dataset.empresaId;
+    const custo = document.querySelector(`.campo-custo-estoque-inicial[data-empresa-id="${empresaId}"]`);
+    linhas.push({
+      empresa_id: Number(empresaId),
+      quantidade,
+      valor_unitario: custo && custo.value ? Number(custo.value) : null,
+    });
+  });
+  return linhas;
 }
 
 // ---------- Imagem ----------
@@ -115,6 +157,11 @@ async function carregarFornecedores() {
   const fornecedores = await api.get('/fornecedores');
   campoFornecedor.innerHTML =
     '<option value="">Nenhum</option>' + fornecedores.map((f) => `<option value="${f.id}">${f.razao_social}</option>`).join('');
+}
+
+async function carregarEmpresasParaEstoqueInicial() {
+  empresasCache = await api.get('/empresas');
+  renderizarTabelaEstoqueInicial();
 }
 
 // ---------- Preços por empresa ----------
@@ -231,6 +278,7 @@ function limparFormularioParaNovoProduto() {
   campoAtivo.checked = true;
   rotuloStatus.textContent = 'Ativo (disponível para venda)';
   atualizarAvisoTipoEstoque();
+  atualizarBlocoEstoqueInicial();
   blocoSaldoEmpresas.innerHTML = '<p style="color:#6b7280; font-size:13px;">Salve o produto para ver o saldo por loja.</p>';
   blocoPrecos.innerHTML = '<p style="color:#6b7280; font-size:13px;">Salve o produto primeiro para configurar os preços por empresa.</p>';
   window.history.replaceState({}, '', 'produto-form.html');
@@ -251,10 +299,26 @@ form.addEventListener('submit', async (event) => {
 
   try {
     let produtoSalvo;
+    const criandoAgora = !produtoId;
     if (produtoId) {
       produtoSalvo = await api.put(`/produtos/${produtoId}`, payload);
     } else {
       produtoSalvo = await api.post('/produtos', payload);
+    }
+
+    if (criandoAgora) {
+      const usuario = usuarioLogado();
+      for (const linha of coletarEstoqueInicial()) {
+        await api.post('/estoque/entradas', {
+          produto_id: produtoSalvo.id,
+          empresa_id: linha.empresa_id,
+          motivo: 'ajuste',
+          quantidade: linha.quantidade,
+          valor_unitario: linha.valor_unitario,
+          usuario_id: usuario ? usuario.id : null,
+          observacao: 'Estoque inicial informado no cadastro do produto.',
+        });
+      }
     }
 
     if (botaoClicado === 'btn-salvar-e-novo') {
@@ -271,7 +335,8 @@ form.addEventListener('submit', async (event) => {
 async function iniciar() {
   renderizarIcones();
   atualizarAvisoTipoEstoque();
-  await Promise.all([carregarSugestoes(), carregarFornecedores()]);
+  await Promise.all([carregarSugestoes(), carregarFornecedores(), carregarEmpresasParaEstoqueInicial()]);
+  atualizarBlocoEstoqueInicial();
 
   if (produtoId) {
     await carregarProdutoExistente();
