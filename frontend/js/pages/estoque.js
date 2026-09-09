@@ -214,7 +214,55 @@ btnLimparFiltros.addEventListener('click', () => {
 });
 
 document.getElementById('btn-exportar').addEventListener('click', exportarCsv);
-document.getElementById('btn-imprimir').addEventListener('click', () => window.print());
+document.getElementById('btn-imprimir').addEventListener('click', () => {
+  montarAreaImpressao();
+  window.print();
+});
+
+function montarAreaImpressao() {
+  const itens = itensFiltrados();
+  const empresaTexto = filtroEmpresa.selectedOptions[0]?.textContent || '';
+  const agora = new Date().toLocaleString('pt-BR');
+
+  document.getElementById('area-impressao').innerHTML = `
+    <div class="impressao-cabecalho">
+      <img src="img/logo-eletrotok.png" alt="Eletrotok" />
+      <div class="impressao-cabecalho-titulo">
+        <h1>Estoque de Produtos</h1>
+        <p>${empresaTexto} • Gerado em ${agora}</p>
+      </div>
+    </div>
+    <div class="impressao-indicadores">
+      <div class="impressao-indicador"><strong>${saldos.length}</strong>Total de produtos</div>
+      <div class="impressao-indicador"><strong>${saldos.filter((s) => s.saldo > 0).length}</strong>Em estoque</div>
+      <div class="impressao-indicador"><strong>${saldos.filter((s) => situacaoDoItem(s) === 'baixo').length}</strong>Estoque baixo</div>
+      <div class="impressao-indicador"><strong>${saldos.filter((s) => s.saldo <= 0).length}</strong>Sem estoque</div>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Produto</th><th>Categoria</th><th>Marca</th><th>Modelo</th><th>Estoque atual</th><th>Estoque mínimo</th><th>Localização</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        ${itens
+          .map(
+            (item) => `
+          <tr>
+            <td>${item.nome}${item.referencia_interna ? ` (${item.referencia_interna})` : ''}</td>
+            <td>${item.categoria || '-'}</td>
+            <td>${item.marca || '-'}</td>
+            <td>${item.modelo || '-'}</td>
+            <td>${item.saldo}</td>
+            <td>${item.estoque_minimo}</td>
+            <td>${item.tipo === 'celular' ? 'Por IMEI' : item.localizacao || '-'}</td>
+            <td>${badgeSituacao(situacaoDoItem(item))}</td>
+          </tr>
+        `
+          )
+          .join('')}
+      </tbody>
+    </table>
+  `;
+}
 
 function mostrarErro(texto) {
   tabelaEstoque.innerHTML = `<tr><td colspan="11" style="color:#b00020;">${texto}</td></tr>`;

@@ -845,3 +845,102 @@ th.ordenavel.ordenado-desc .icone-ordenacao {
   text-align: center;
   color: var(--text-secundario);
 }
+
+/* ---------- Impressao ---------- */
+
+.somente-impressao {
+  display: none;
+}
+
+.impressao-cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid #000;
+}
+
+.impressao-cabecalho img {
+  height: 44px;
+}
+
+.impressao-cabecalho-titulo h1 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.impressao-cabecalho-titulo p {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: #555;
+}
+
+.impressao-indicadores {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 18px;
+}
+
+.impressao-indicador {
+  font-size: 12px;
+}
+
+.impressao-indicador strong {
+  display: block;
+  font-size: 18px;
+}
+
+@media print {
+  #app-sidebar,
+  #app-topbar,
+  #app-faixa-contexto,
+  .pagina-cabecalho,
+  .barra-filtros,
+  .painel-form:has(.barra-filtros),
+  .rodape-tabela,
+  .botao,
+  .acoes-tabela,
+  th:last-child,
+  td:last-child,
+  input[type='checkbox'] {
+    display: none !important;
+  }
+
+  body {
+    display: block;
+    background: #fff;
+  }
+
+  #app-conteudo {
+    display: block;
+  }
+
+  #app-main {
+    padding: 0;
+  }
+
+  .painel-form {
+    box-shadow: none;
+    border: none;
+    padding: 0;
+  }
+
+  .somente-impressao {
+    display: block;
+  }
+
+  table {
+    font-size: 11px;
+  }
+
+  thead th {
+    background: #fff !important;
+  }
+
+  .badge-tag,
+  .impressao-cabecalho img {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
