@@ -2,9 +2,10 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Eletrotok - Empresas</title>
+  <title>Eletrotok - Empresas / CNPJs</title>
   <link rel="stylesheet" href="css/layout.css" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/produto-form.css" />
+  <link rel="stylesheet" href="css/produtos-lista.css" />
 </head>
 <body>
   <div id="app-sidebar"></div>
@@ -14,60 +15,107 @@
     <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
 
     <main id="app-main">
-      <section class="card">
-        <h2>Nova empresa</h2>
-        <form id="form-empresa">
-          <label>Razão social
-            <input type="text" name="razao_social" required />
-          </label>
-          <label>Nome fantasia
-            <input type="text" name="nome_fantasia" />
-          </label>
-          <label>CNPJ
-            <input type="text" name="cnpj" id="campo-cnpj" required />
-          </label>
-          <label>Tipo
-            <select name="tipo" required>
-              <option value="">Selecione</option>
-              <option value="atacado">Atacado</option>
-              <option value="varejo">Varejo</option>
-            </select>
-          </label>
-          <label>Regime tributário
-            <input type="text" name="regime_tributario" />
-          </label>
-          <label>Inscrição estadual
-            <input type="text" name="inscricao_estadual" />
-          </label>
-          <label class="campo-largo">Endereço
-            <input type="text" name="endereco" />
-          </label>
-          <label>Telefone
-            <input type="text" name="telefone" />
-          </label>
-          <div class="acoes">
-            <button type="submit">Salvar</button>
-            <button type="button" class="btn-link" id="btn-cancelar-edicao" hidden>Cancelar edição</button>
+      <div class="pagina-cabecalho">
+        <div class="pagina-cabecalho-titulo">
+          <div class="pagina-cabecalho-icone" id="icone-pagina"></div>
+          <div>
+            <h1>Empresas / CNPJs</h1>
+            <p>Cadastro das empresas do grupo — atacado e varejo.</p>
           </div>
-          <div class="mensagem" id="mensagem-empresa"></div>
-        </form>
-      </section>
+        </div>
+        <div class="breadcrumb">
+          <a href="index.html">Início</a> &gt; <strong>Empresas / CNPJs</strong>
+        </div>
+      </div>
 
-      <section class="card">
-        <h2>Empresas cadastradas</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Razão social</th>
-              <th>CNPJ</th>
-              <th>Tipo</th>
-              <th>Ativa</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="tabela-empresas"></tbody>
-        </table>
-      </section>
+      <div class="cards-resumo">
+        <div class="card-resumo">
+          <div class="card-resumo-icone azul" id="icone-total"></div>
+          <div class="card-resumo-corpo"><p class="card-resumo-titulo">Total de empresas</p><p class="card-resumo-valor" id="valor-total">0</p></div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone verde" id="icone-ativas"></div>
+          <div class="card-resumo-corpo"><p class="card-resumo-titulo">Ativas</p><p class="card-resumo-valor" id="valor-ativas">0</p></div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone laranja" id="icone-varejo"></div>
+          <div class="card-resumo-corpo"><p class="card-resumo-titulo">Varejo</p><p class="card-resumo-valor" id="valor-varejo">0</p></div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone roxo" id="icone-atacado"></div>
+          <div class="card-resumo-corpo"><p class="card-resumo-titulo">Atacado</p><p class="card-resumo-valor" id="valor-atacado">0</p></div>
+        </div>
+      </div>
+
+      <div class="layout-formulario">
+        <div class="painel-form">
+          <p class="painel-form-titulo"><span id="icone-form"></span> <span id="titulo-form">Nova empresa</span></p>
+          <form id="form-empresa">
+            <div class="grid-campos">
+              <label class="campo largo">Razão social *
+                <input type="text" name="razao_social" required />
+              </label>
+              <label class="campo">Nome fantasia
+                <input type="text" name="nome_fantasia" />
+              </label>
+              <label class="campo">CNPJ *
+                <input type="text" name="cnpj" id="campo-cnpj" placeholder="00.000.000/0000-00" required />
+              </label>
+              <label class="campo">Tipo *
+                <select name="tipo" required>
+                  <option value="">Selecione</option>
+                  <option value="atacado">Atacado</option>
+                  <option value="varejo">Varejo</option>
+                </select>
+              </label>
+              <label class="campo">Regime tributário
+                <input type="text" name="regime_tributario" placeholder="Ex: Simples Nacional" />
+              </label>
+              <label class="campo">Inscrição estadual
+                <input type="text" name="inscricao_estadual" />
+              </label>
+              <label class="campo largo">Endereço
+                <input type="text" name="endereco" />
+              </label>
+              <label class="campo">Telefone
+                <input type="text" name="telefone" />
+              </label>
+            </div>
+            <div class="barra-acoes-formulario" style="margin-top:16px;">
+              <button type="button" class="botao secundario" id="btn-cancelar-edicao" hidden>Cancelar edição</button>
+              <button type="submit" class="botao primario" style="margin-left:auto;"><span id="icone-salvar"></span> Salvar empresa</button>
+            </div>
+            <div class="mensagem" id="mensagem-empresa"></div>
+          </form>
+        </div>
+
+        <div class="painel-form">
+          <p class="painel-form-titulo">Como funciona</p>
+          <p style="font-size:12px; color:var(--text-secundario);">
+            Cada empresa tem seu próprio estoque, tabela de preços e configuração fiscal.
+            O tipo (<strong>atacado</strong> ou <strong>varejo</strong>) define automaticamente qual nota
+            fiscal é emitida em cada venda.
+          </p>
+        </div>
+      </div>
+
+      <div class="painel-form">
+        <p class="painel-form-titulo">Empresas cadastradas</p>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Razão social</th>
+                <th>CNPJ</th>
+                <th>Tipo</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-empresas"></tbody>
+          </table>
+        </div>
+      </div>
     </main>
   </div>
 

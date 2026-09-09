@@ -3,8 +3,19 @@ const tabela = document.getElementById('tabela-empresas');
 const mensagem = document.getElementById('mensagem-empresa');
 const campoCnpj = document.getElementById('campo-cnpj');
 const btnCancelarEdicao = document.getElementById('btn-cancelar-edicao');
+const tituloForm = document.getElementById('titulo-form');
 
 let empresaEmEdicaoId = null;
+
+function renderizarIcones() {
+  document.getElementById('icone-pagina').innerHTML = svgIcone('building');
+  document.getElementById('icone-form').innerHTML = svgIcone('building');
+  document.getElementById('icone-salvar').innerHTML = svgIcone('save');
+  document.getElementById('icone-total').innerHTML = svgIcone('building');
+  document.getElementById('icone-ativas').innerHTML = svgIcone('check-circle');
+  document.getElementById('icone-varejo').innerHTML = svgIcone('cart');
+  document.getElementById('icone-atacado').innerHTML = svgIcone('truck');
+}
 
 function mostrarMensagem(texto, tipo) {
   mensagem.textContent = texto;
@@ -16,6 +27,7 @@ function limparFormulario() {
   empresaEmEdicaoId = null;
   campoCnpj.disabled = false;
   btnCancelarEdicao.hidden = true;
+  tituloForm.textContent = 'Nova empresa';
 }
 
 function preencherFormularioParaEdicao(empresa) {
@@ -30,23 +42,39 @@ function preencherFormularioParaEdicao(empresa) {
   form.telefone.value = empresa.telefone || '';
   campoCnpj.disabled = true;
   btnCancelarEdicao.hidden = false;
+  tituloForm.textContent = `Editando: ${empresa.razao_social}`;
+  document.getElementById('painel-filtros')?.scrollIntoView?.({ behavior: 'smooth' });
+}
+
+function atualizarCards(empresas) {
+  document.getElementById('valor-total').textContent = empresas.length;
+  document.getElementById('valor-ativas').textContent = empresas.filter((e) => e.ativa).length;
+  document.getElementById('valor-varejo').textContent = empresas.filter((e) => e.tipo === 'varejo').length;
+  document.getElementById('valor-atacado').textContent = empresas.filter((e) => e.tipo === 'atacado').length;
 }
 
 async function carregarEmpresas() {
   const empresas = await api.get('/empresas');
-  tabela.innerHTML = '';
+  atualizarCards(empresas);
 
-  empresas.forEach((empresa) => {
-    const linha = document.createElement('tr');
-    linha.innerHTML = `
-      <td>${empresa.razao_social}</td>
-      <td>${empresa.cnpj}</td>
-      <td>${empresa.tipo}</td>
-      <td>${empresa.ativa ? 'Sim' : 'Não'}</td>
-      <td><button type="button" class="btn-link" data-id="${empresa.id}">Editar</button></td>
-    `;
-    linha.querySelector('button').addEventListener('click', () => preencherFormularioParaEdicao(empresa));
-    tabela.appendChild(linha);
+  tabela.innerHTML =
+    empresas
+      .map(
+        (empresa) => `
+      <tr>
+        <td><strong>${empresa.razao_social}</strong>${empresa.nome_fantasia ? `<div style="font-size:11px; color:var(--text-secundario);">${empresa.nome_fantasia}</div>` : ''}</td>
+        <td>${empresa.cnpj}</td>
+        <td><span class="badge-tag ${empresa.tipo === 'atacado' ? 'roxo' : 'info'}">${empresa.tipo === 'atacado' ? 'Atacado' : 'Varejo'}</span></td>
+        <td><span class="badge-tag ${empresa.ativa ? 'ativo' : 'inativo'}">${empresa.ativa ? 'Ativa' : 'Inativa'}</span></td>
+        <td><button type="button" class="btn-link" data-id="${empresa.id}">Editar</button></td>
+      </tr>
+    `
+      )
+      .join('') || '<tr><td colspan="5" style="text-align:center; color:var(--text-secundario); padding:24px;">Nenhuma empresa cadastrada ainda.</td></tr>';
+
+  tabela.querySelectorAll('button[data-id]').forEach((botao) => {
+    const empresa = empresas.find((e) => e.id === Number(botao.dataset.id));
+    botao.addEventListener('click', () => preencherFormularioParaEdicao(empresa));
   });
 }
 
@@ -71,4 +99,5 @@ form.addEventListener('submit', async (event) => {
 
 btnCancelarEdicao.addEventListener('click', limparFormulario);
 
+renderizarIcones();
 carregarEmpresas().catch((erro) => mostrarMensagem(erro.message, 'erro'));

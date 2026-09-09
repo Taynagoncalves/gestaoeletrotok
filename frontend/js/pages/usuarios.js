@@ -7,8 +7,20 @@ const wrapperSenha = document.getElementById('wrapper-senha');
 const btnCancelarEdicao = document.getElementById('btn-cancelar-edicao');
 const listaEmpresasCheckbox = document.getElementById('lista-empresas-checkbox');
 
+const tituloForm = document.getElementById('titulo-form');
+
 let usuarioEmEdicaoId = null;
 let empresas = [];
+
+function renderizarIcones() {
+  document.getElementById('icone-pagina').innerHTML = svgIcone('user');
+  document.getElementById('icone-form').innerHTML = svgIcone('user');
+  document.getElementById('icone-salvar').innerHTML = svgIcone('save');
+  document.getElementById('icone-total').innerHTML = svgIcone('users');
+  document.getElementById('icone-admin').innerHTML = svgIcone('settings');
+  document.getElementById('icone-caixa').innerHTML = svgIcone('cart');
+  document.getElementById('icone-tecnico').innerHTML = svgIcone('wrench');
+}
 
 function mostrarMensagem(texto, tipo) {
   mensagem.textContent = texto;
@@ -22,17 +34,14 @@ function limparFormulario() {
   wrapperSenha.hidden = false;
   campoSenha.required = true;
   btnCancelarEdicao.hidden = true;
+  tituloForm.textContent = 'Novo usuário';
   listaEmpresasCheckbox.querySelectorAll('input').forEach((c) => (c.checked = false));
 }
 
 async function carregarEmpresas() {
   empresas = await api.get('/empresas');
   listaEmpresasCheckbox.innerHTML = empresas
-    .map(
-      (e) => `<label style="display:flex; align-items:center; gap:6px; font-size:13px;">
-        <input type="checkbox" value="${e.id}" /> ${e.razao_social}
-      </label>`
-    )
+    .map((e) => `<label class="checkbox-item"><input type="checkbox" value="${e.id}" /> ${e.razao_social}</label>`)
     .join('');
 }
 
@@ -45,6 +54,7 @@ async function preencherFormularioParaEdicao(usuario) {
   campoSenha.required = false;
   form.perfil.value = usuario.perfil;
   btnCancelarEdicao.hidden = false;
+  tituloForm.textContent = `Editando: ${usuario.nome}`;
 
   const empresasDoUsuario = await api.get(`/usuarios/${usuario.id}/empresas`);
   const idsVinculados = new Set(empresasDoUsuario.map((e) => e.id));
@@ -53,21 +63,31 @@ async function preencherFormularioParaEdicao(usuario) {
   });
 }
 
+const ROTULOS_PERFIL = { admin: 'Administrador', caixa: 'Operador de caixa', tecnico: 'Técnico' };
+const BADGE_PERFIL = { admin: 'roxo', caixa: 'pendente', tecnico: 'info' };
+
 async function carregarUsuarios() {
   const usuarios = await api.get('/usuarios');
-  tabela.innerHTML = usuarios
-    .map(
-      (u) => `
+
+  document.getElementById('valor-total').textContent = usuarios.length;
+  document.getElementById('valor-admin').textContent = usuarios.filter((u) => u.perfil === 'admin').length;
+  document.getElementById('valor-caixa').textContent = usuarios.filter((u) => u.perfil === 'caixa').length;
+  document.getElementById('valor-tecnico').textContent = usuarios.filter((u) => u.perfil === 'tecnico').length;
+
+  tabela.innerHTML =
+    usuarios
+      .map(
+        (u) => `
       <tr>
-        <td>${u.nome}</td>
+        <td><strong>${u.nome}</strong></td>
         <td>${u.login}</td>
-        <td>${u.perfil}</td>
-        <td>${u.ativo ? 'Sim' : 'Não'}</td>
+        <td><span class="badge-tag ${BADGE_PERFIL[u.perfil] || 'info'}">${ROTULOS_PERFIL[u.perfil] || u.perfil}</span></td>
+        <td><span class="badge-tag ${u.ativo ? 'ativo' : 'inativo'}">${u.ativo ? 'Ativo' : 'Inativo'}</span></td>
         <td><button type="button" class="btn-link" data-id="${u.id}">Editar</button></td>
       </tr>
     `
-    )
-    .join('');
+      )
+      .join('') || '<tr><td colspan="5" style="text-align:center; color:var(--text-secundario); padding:24px;">Nenhum usuário cadastrado ainda.</td></tr>';
 
   tabela.querySelectorAll('button').forEach((botao) => {
     const usuario = usuarios.find((u) => u.id === Number(botao.dataset.id));
@@ -98,7 +118,7 @@ form.addEventListener('submit', async (event) => {
 btnCancelarEdicao.addEventListener('click', limparFormulario);
 
 async function iniciar() {
-  document.getElementById('icone-pagina').innerHTML = svgIcone('user');
+  renderizarIcones();
   await carregarEmpresas();
   await carregarUsuarios();
 }

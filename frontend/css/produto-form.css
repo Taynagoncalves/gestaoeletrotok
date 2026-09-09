@@ -16,23 +16,26 @@
 .pagina-cabecalho-icone {
   width: 48px;
   height: 48px;
-  border-radius: 12px;
-  background: var(--sidebar-bg, #12141c);
-  color: #fff;
+  border-radius: var(--radius-md, 10px);
+  background: linear-gradient(155deg, var(--sidebar-bg, #0a0a0a), #262626);
+  color: var(--accent, #f5821f);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: var(--sombra-sm);
 }
 
 .pagina-cabecalho-icone svg {
-  width: 24px;
-  height: 24px;
+  width: 23px;
+  height: 23px;
 }
 
 .pagina-cabecalho h1 {
   margin: 0;
   font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
 }
 
 .pagina-cabecalho p {
@@ -61,13 +64,18 @@
 .abas button {
   border: none;
   background: none;
-  padding: 10px 16px;
+  padding: 11px 18px;
   font-size: 13px;
   font-weight: 600;
   color: var(--text-secundario, #6b7280);
   cursor: pointer;
   border-bottom: 3px solid transparent;
   white-space: nowrap;
+  transition: color var(--transicao, 0.15s), border-color var(--transicao, 0.15s);
+}
+
+.abas button:hover {
+  color: var(--text-principal, #14171f);
 }
 
 .abas button.ativo {
@@ -91,8 +99,9 @@
 .painel-form {
   background: #fff;
   border: 1px solid var(--border, #e5e7eb);
-  border-radius: 10px;
-  padding: 18px;
+  border-radius: var(--radius-md, 10px);
+  box-shadow: var(--sombra-sm);
+  padding: 20px;
   margin-bottom: 16px;
 }
 
@@ -102,7 +111,9 @@
   gap: 8px;
   font-size: 14px;
   font-weight: 700;
-  margin: 0 0 14px;
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border, #e5e7eb);
 }
 
 .grid-campos {
@@ -136,12 +147,28 @@
 .campo input,
 .campo select,
 .campo textarea {
-  padding: 9px 10px;
+  padding: 9px 11px;
   border: 1px solid var(--border, #e5e7eb);
-  border-radius: 6px;
+  border-radius: var(--radius-sm, 6px);
   font-size: 13px;
   color: var(--text-principal, #1f2430);
   font-family: inherit;
+  background: #fff;
+  transition: border-color var(--transicao, 0.15s), box-shadow var(--transicao, 0.15s);
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+  outline: none;
+  border-color: var(--accent, #f5821f);
+  box-shadow: 0 0 0 3px var(--accent-soft, #fff1e2);
+}
+
+.campo input:disabled,
+.campo select:disabled {
+  background: #f3f4f6;
+  color: var(--text-terciario, #9ca3af);
 }
 
 .campo textarea {
@@ -266,14 +293,19 @@
 
 .badge-tag {
   display: inline-block;
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 999px;
   font-size: 11px;
   font-weight: 700;
+  white-space: nowrap;
 }
 
-.badge-tag.ativo { background: #dcfce7; color: #15803d; }
+.badge-tag.ativo { background: var(--accent-green-soft, #dcfce7); color: #15803d; }
 .badge-tag.inativo { background: #f3f4f6; color: #6b7280; }
+.badge-tag.pendente { background: #ffe8d1; color: #b45309; }
+.badge-tag.erro { background: var(--accent-red-soft, #fee2e2); color: #b91c1c; }
+.badge-tag.info { background: var(--accent-blue-soft, #dbeafe); color: #1d4ed8; }
+.badge-tag.roxo { background: var(--accent-purple-soft, #ede9fe); color: #6d28d9; }
 
 .aviso-inline {
   background: #f0f4ff;
@@ -304,11 +336,12 @@
   align-items: center;
   gap: 8px;
   padding: 10px 18px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm, 8px);
   border: none;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
+  transition: background var(--transicao, 0.15s), box-shadow var(--transicao, 0.15s), transform var(--transicao, 0.15s), border-color var(--transicao, 0.15s);
 }
 
 .botao svg {
@@ -316,9 +349,22 @@
   height: 16px;
 }
 
-.botao.primario { background: var(--accent, #f5821f); color: #fff; }
+.botao:active {
+  transform: translateY(1px);
+}
+
+.botao:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.botao.primario { background: var(--accent, #f5821f); color: #fff; box-shadow: var(--sombra-sm); }
+.botao.primario:hover:not(:disabled) { background: var(--accent-hover, #e07213); box-shadow: var(--sombra-md); }
 .botao.secundario { background: #fff; color: var(--text-principal, #1f2430); border: 1px solid var(--border, #e5e7eb); }
+.botao.secundario:hover:not(:disabled) { background: #f9fafb; border-color: var(--border-forte, #d1d5db); }
 .botao.perigo { background: #fff; color: #dc2626; border: 1px solid #fecaca; }
+.botao.perigo:hover:not(:disabled) { background: var(--accent-red-soft, #fee2e2); }
 .botao.laranja-claro { background: #ffe8d1; color: #b45309; }
 
 .tabela-saldo-empresas {

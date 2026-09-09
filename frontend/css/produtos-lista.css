@@ -131,15 +131,24 @@
 .paginacao button {
   border: 1px solid var(--border);
   background: #fff;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   width: 30px;
   height: 30px;
   cursor: pointer;
   font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secundario);
+  transition: background var(--transicao), border-color var(--transicao), color var(--transicao);
+}
+
+.paginacao button:hover:not(.ativo) {
+  background: #f9fafb;
+  border-color: var(--border-forte);
 }
 
 .paginacao button.ativo {
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
+  box-shadow: var(--sombra-sm);
 }

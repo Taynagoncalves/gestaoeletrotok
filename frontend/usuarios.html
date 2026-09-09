@@ -5,7 +5,7 @@
   <title>Eletrotok - Usuários</title>
   <link rel="stylesheet" href="css/layout.css" />
   <link rel="stylesheet" href="css/produto-form.css" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/produtos-lista.css" />
 </head>
 <body>
   <div id="app-sidebar"></div>
@@ -23,49 +23,75 @@
             <p>Login, perfis de acesso e vínculo com empresas.</p>
           </div>
         </div>
+        <div class="breadcrumb">
+          <a href="index.html">Início</a> &gt; <strong>Usuários</strong>
+        </div>
       </div>
 
-      <section class="card">
-        <h2>Novo usuário</h2>
+      <div class="cards-resumo">
+        <div class="card-resumo">
+          <div class="card-resumo-icone azul" id="icone-total"></div>
+          <div class="card-resumo-corpo"><p class="card-resumo-titulo">Total de usuários</p><p class="card-resumo-valor" id="valor-total">0</p></div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone roxo" id="icone-admin"></div>
+          <div class="card-resumo-corpo"><p class="card-resumo-titulo">Administradores</p><p class="card-resumo-valor" id="valor-admin">0</p></div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone laranja" id="icone-caixa"></div>
+          <div class="card-resumo-corpo"><p class="card-resumo-titulo">Operadores de caixa</p><p class="card-resumo-valor" id="valor-caixa">0</p></div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone verde" id="icone-tecnico"></div>
+          <div class="card-resumo-corpo"><p class="card-resumo-titulo">Técnicos</p><p class="card-resumo-valor" id="valor-tecnico">0</p></div>
+        </div>
+      </div>
+
+      <div class="painel-form">
+        <p class="painel-form-titulo"><span id="icone-form"></span> <span id="titulo-form">Novo usuário</span></p>
         <form id="form-usuario">
-          <label>Nome
-            <input type="text" name="nome" required />
-          </label>
-          <label>Login
-            <input type="text" name="login" id="campo-login" required />
-          </label>
-          <label id="wrapper-senha">Senha
-            <input type="password" name="senha" id="campo-senha" />
-          </label>
-          <label>Perfil
-            <select name="perfil" required>
-              <option value="">Selecione</option>
-              <option value="admin">Administrador</option>
-              <option value="caixa">Operador de caixa</option>
-              <option value="tecnico">Técnico de assistência</option>
-            </select>
-          </label>
-          <div class="campo-largo">
-            <p style="margin-bottom:6px; font-size:13px;">Acesso às empresas</p>
-            <div id="lista-empresas-checkbox" style="display:flex; gap:16px; flex-wrap:wrap;"></div>
+          <div class="grid-campos">
+            <label class="campo">Nome *
+              <input type="text" name="nome" required />
+            </label>
+            <label class="campo">Login *
+              <input type="text" name="login" id="campo-login" required />
+            </label>
+            <label class="campo" id="wrapper-senha">Senha *
+              <input type="password" name="senha" id="campo-senha" />
+            </label>
+            <label class="campo">Perfil *
+              <select name="perfil" required>
+                <option value="">Selecione</option>
+                <option value="admin">Administrador</option>
+                <option value="caixa">Operador de caixa</option>
+                <option value="tecnico">Técnico de assistência</option>
+              </select>
+            </label>
           </div>
-          <div class="acoes">
-            <button type="submit">Salvar</button>
-            <button type="button" class="btn-link" id="btn-cancelar-edicao" hidden>Cancelar edição</button>
+          <div style="margin-top:14px;">
+            <p style="margin-bottom:8px; font-size:12px; font-weight:600; color:var(--text-secundario);">Acesso às empresas</p>
+            <div id="lista-empresas-checkbox" class="checkbox-linha"></div>
+          </div>
+          <div class="barra-acoes-formulario" style="margin-top:16px;">
+            <button type="button" class="botao secundario" id="btn-cancelar-edicao" hidden>Cancelar edição</button>
+            <button type="submit" class="botao primario" style="margin-left:auto;"><span id="icone-salvar"></span> Salvar usuário</button>
           </div>
           <div class="mensagem" id="mensagem-usuario"></div>
         </form>
-      </section>
+      </div>
 
-      <section class="card">
-        <h2>Usuários cadastrados</h2>
-        <table>
-          <thead>
-            <tr><th>Nome</th><th>Login</th><th>Perfil</th><th>Ativo</th><th></th></tr>
-          </thead>
-          <tbody id="tabela-usuarios"></tbody>
-        </table>
-      </section>
+      <div class="painel-form">
+        <p class="painel-form-titulo">Usuários cadastrados</p>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr><th>Nome</th><th>Login</th><th>Perfil</th><th>Status</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="tabela-usuarios"></tbody>
+          </table>
+        </div>
+      </div>
     </main>
   </div>
 

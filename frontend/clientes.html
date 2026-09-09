@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <title>Eletrotok - Clientes</title>
   <link rel="stylesheet" href="css/layout.css" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/produto-form.css" />
+  <link rel="stylesheet" href="css/produtos-lista.css" />
 </head>
 <body>
   <div id="app-sidebar"></div>
@@ -14,44 +15,76 @@
     <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
 
     <main id="app-main">
-      <section class="card">
-        <h2>Novo cliente</h2>
+      <div class="pagina-cabecalho">
+        <div class="pagina-cabecalho-titulo">
+          <div class="pagina-cabecalho-icone" id="icone-pagina"></div>
+          <div>
+            <h1>Clientes</h1>
+            <p>Cadastro de clientes usado no PDV e na Ordem de Serviço.</p>
+          </div>
+        </div>
+        <div class="breadcrumb">
+          <a href="index.html">Início</a> &gt; <strong>Clientes</strong>
+        </div>
+      </div>
+
+      <div class="cards-resumo">
+        <div class="card-resumo">
+          <div class="card-resumo-icone azul" id="icone-total"></div>
+          <div class="card-resumo-corpo"><p class="card-resumo-titulo">Total de clientes</p><p class="card-resumo-valor" id="valor-total">0</p></div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone verde" id="icone-com-telefone"></div>
+          <div class="card-resumo-corpo"><p class="card-resumo-titulo">Com telefone cadastrado</p><p class="card-resumo-valor" id="valor-com-telefone">0</p></div>
+        </div>
+      </div>
+
+      <div class="painel-form">
+        <p class="painel-form-titulo"><span id="icone-form"></span> <span id="titulo-form">Novo cliente</span></p>
         <form id="form-cliente">
-          <label class="campo-largo">Nome
-            <input type="text" name="nome" required />
-          </label>
-          <label>CPF/CNPJ
-            <input type="text" name="cpf_cnpj" />
-          </label>
-          <label>Telefone
-            <input type="text" name="telefone" />
-          </label>
-          <label class="campo-largo">Endereço
-            <input type="text" name="endereco" />
-          </label>
-          <div class="acoes">
-            <button type="submit">Salvar</button>
-            <button type="button" class="btn-link" id="btn-cancelar-edicao" hidden>Cancelar edição</button>
+          <div class="grid-campos">
+            <label class="campo largo">Nome *
+              <input type="text" name="nome" required />
+            </label>
+            <label class="campo">CPF/CNPJ
+              <input type="text" name="cpf_cnpj" />
+            </label>
+            <label class="campo">Telefone
+              <input type="text" name="telefone" />
+            </label>
+            <label class="campo largo">Endereço
+              <input type="text" name="endereco" />
+            </label>
+          </div>
+          <div class="barra-acoes-formulario" style="margin-top:16px;">
+            <button type="button" class="botao secundario" id="btn-cancelar-edicao" hidden>Cancelar edição</button>
+            <button type="submit" class="botao primario" style="margin-left:auto;"><span id="icone-salvar"></span> Salvar cliente</button>
           </div>
           <div class="mensagem" id="mensagem-cliente"></div>
         </form>
-      </section>
+      </div>
 
-      <section class="card">
-        <h2>Clientes cadastrados</h2>
-        <input type="text" id="campo-busca" placeholder="Buscar por nome, CPF/CNPJ ou telefone..." style="margin-bottom:12px; width:100%; max-width:320px; padding:8px; border:1px solid #ccc; border-radius:4px;" />
-        <table>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>CPF/CNPJ</th>
-              <th>Telefone</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="tabela-clientes"></tbody>
-        </table>
-      </section>
+      <div class="painel-form">
+        <div class="barra-filtros">
+          <div class="campo-busca-lista" style="max-width:360px;">
+            <span id="icone-busca"></span>
+            <input type="text" id="campo-busca" placeholder="Buscar por nome, CPF/CNPJ ou telefone..." />
+          </div>
+        </div>
+        <div style="overflow-x:auto; margin-top:14px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>CPF/CNPJ</th>
+                <th>Telefone</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-clientes"></tbody>
+          </table>
+        </div>
+      </div>
     </main>
   </div>
 
