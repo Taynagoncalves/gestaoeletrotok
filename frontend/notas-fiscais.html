@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <title>Eletrotok - Notas Fiscais</title>
   <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/produto-form.css" />
+  <link rel="stylesheet" href="css/produtos-lista.css" />
+  <link rel="stylesheet" href="css/pdv.css" />
 </head>
 <body>
   <div id="app-sidebar"></div>
@@ -11,21 +14,80 @@
     <div id="app-topbar"></div>
     <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
     <main id="app-main">
-      <div class="dashboard-cabecalho">
-        <div>
-          <h1>Notas Fiscais</h1>
-          <p>Emissão via provedor terceirizado (Focus NFe / PlugNotas).</p>
+      <div class="pagina-cabecalho">
+        <div class="pagina-cabecalho-titulo">
+          <div class="pagina-cabecalho-icone" id="icone-pagina"></div>
+          <div>
+            <h1>Notas Fiscais</h1>
+            <p>Emissão via provedor terceirizado (Focus NFe / PlugNotas).</p>
+          </div>
+        </div>
+        <a href="configuracoes.html" class="botao secundario"><span id="icone-config"></span> Configuração fiscal</a>
+      </div>
+
+      <div class="cards-resumo">
+        <div class="card-resumo">
+          <div class="card-resumo-icone azul" id="icone-total"></div>
+          <div><p class="card-resumo-titulo">Total de notas</p><p class="card-resumo-valor" id="valor-total">0</p></div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone verde" id="icone-autorizadas"></div>
+          <div><p class="card-resumo-titulo">Autorizadas</p><p class="card-resumo-valor" id="valor-autorizadas">0</p></div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone laranja" id="icone-pendentes"></div>
+          <div><p class="card-resumo-titulo">Pendentes</p><p class="card-resumo-valor" id="valor-pendentes">0</p></div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone vermelho" id="icone-erro"></div>
+          <div><p class="card-resumo-titulo">Com erro / rejeitadas</p><p class="card-resumo-valor" id="valor-erro">0</p></div>
         </div>
       </div>
-      <div class="aviso-em-construcao">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
-        <p>Módulo em construção.</p>
-        <p>Em breve esta tela vai trazer emissão de NFC-e e NFe 55, consulta de status, reemissão e cancelamento.</p>
+
+      <div class="painel-form">
+        <div class="barra-filtros">
+          <label class="campo-filtro">Status
+            <select id="filtro-status">
+              <option value="">Todos</option>
+              <option value="pendente">Pendente</option>
+              <option value="autorizada">Autorizada</option>
+              <option value="rejeitada">Rejeitada</option>
+              <option value="cancelada">Cancelada</option>
+              <option value="erro">Erro</option>
+            </select>
+          </label>
+          <label class="campo-filtro">Tipo
+            <select id="filtro-tipo">
+              <option value="">Todos</option>
+              <option value="nfce">NFC-e</option>
+              <option value="nfe55">NFe 55</option>
+            </select>
+          </label>
+          <label class="campo-filtro">Origem
+            <select id="filtro-origem">
+              <option value="">Todas</option>
+              <option value="venda">Venda</option>
+              <option value="os">Ordem de Serviço</option>
+            </select>
+          </label>
+          <button type="button" class="botao secundario" id="btn-limpar-filtros"><span id="icone-limpar"></span> Limpar</button>
+        </div>
+      </div>
+
+      <div class="painel-form">
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr><th>Nº nota</th><th>Origem</th><th>Tipo</th><th>Status</th><th>Chave de acesso</th><th>Emitida em</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="tabela-notas"></tbody>
+          </table>
+        </div>
       </div>
     </main>
   </div>
   <script src="js/shared/api.js"></script>
   <script src="js/shared/layout.js"></script>
-  <script>initLayout('notas');</script>
+  <script src="js/pages/notas-fiscais.js"></script>
 </body>
 </html>

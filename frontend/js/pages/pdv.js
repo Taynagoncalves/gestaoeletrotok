@@ -186,7 +186,11 @@ function renderizarPaginacao(totalPaginas) {
 }
 
 async function mostrarDetalhes(id) {
-  const venda = await api.get(`/vendas/${id}`);
+  const [venda, notas] = await Promise.all([
+    api.get(`/vendas/${id}`),
+    api.get(`/notas-fiscais/origem/venda/${id}`).catch(() => []),
+  ]);
+
   painelDetalhes.innerHTML = `
     <p class="painel-form-titulo">Detalhes da venda #${String(venda.id).padStart(6, '0')} ${badgeStatus(venda.status)}</p>
     <p><strong>Cliente:</strong> ${venda.cliente_nome || 'Consumidor não identificado'}</p>
@@ -206,7 +210,17 @@ async function mostrarDetalhes(id) {
     ${venda.pagamentos
       .map((p) => `<p style="font-size:12px; color:#6b7280;">Pagamento: ${p.forma} ${p.parcelas > 1 ? `(${p.parcelas}x)` : ''} - ${formatarMoeda(p.valor)}</p>`)
       .join('')}
+    <div id="bloco-nota-fiscal-venda" style="margin-top:12px; border-top:1px solid #e5e7eb; padding-top:10px;"></div>
   `;
+
+  renderizarBlocoNotaFiscal(
+    document.getElementById('bloco-nota-fiscal-venda'),
+    'venda',
+    venda.id,
+    notas,
+    venda.status !== 'concluida',
+    'Só é possível emitir nota de vendas concluídas'
+  );
 }
 
 async function carregarTudo() {

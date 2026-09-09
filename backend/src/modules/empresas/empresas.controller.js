@@ -20,9 +20,21 @@ async function atualizar(req, res) {
   res.json(empresa);
 }
 
+async function buscarConfigFiscal(req, res) {
+  const config = await service.buscarConfigFiscal(req.params.id);
+  res.json(config);
+}
+
+async function salvarConfigFiscal(req, res) {
+  const config = await service.salvarConfigFiscal(req.params.id, req.body);
+  res.json(config);
+}
+
 module.exports = {
   listar,
   buscarPorId,
   criar,
   atualizar,
+  buscarConfigFiscal,
+  salvarConfigFiscal,
 };

@@ -8,5 +8,7 @@ router.get('/', asyncHandler(controller.listar));
 router.get('/:id', asyncHandler(controller.buscarPorId));
 router.post('/', asyncHandler(controller.criar));
 router.put('/:id', asyncHandler(controller.atualizar));
+router.get('/:id/config-fiscal', asyncHandler(controller.buscarConfigFiscal));
+router.put('/:id/config-fiscal', asyncHandler(controller.salvarConfigFiscal));
 
 module.exports = router;

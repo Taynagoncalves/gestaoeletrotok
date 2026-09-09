@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <title>Eletrotok - Configurações</title>
   <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/produto-form.css" />
+  <link rel="stylesheet" href="css/entrada-estoque.css" />
 </head>
 <body>
   <div id="app-sidebar"></div>
@@ -11,21 +13,119 @@
     <div id="app-topbar"></div>
     <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
     <main id="app-main">
-      <div class="dashboard-cabecalho">
-        <div>
-          <h1>Configurações</h1>
-          <p>Dados fiscais por empresa, certificado digital e preferências do sistema.</p>
+      <div class="pagina-cabecalho">
+        <div class="pagina-cabecalho-titulo">
+          <div class="pagina-cabecalho-icone" id="icone-pagina"></div>
+          <div>
+            <h1>Configurações fiscais</h1>
+            <p>Dados fiscais, certificado digital e provedor de NF-e por empresa.</p>
+          </div>
         </div>
       </div>
-      <div class="aviso-em-construcao">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
-        <p>Módulo em construção.</p>
-        <p>Em breve esta tela vai trazer a configuração fiscal de cada empresa (certificado, provider de NF-e, ambiente).</p>
+
+      <div class="painel-form">
+        <label class="campo" style="max-width:360px;">Empresa
+          <select id="select-empresa"></select>
+        </label>
       </div>
+
+      <div class="aviso-inline" id="aviso-status-config"></div>
+
+      <div class="layout-formulario">
+        <div>
+          <div class="painel-form">
+            <p class="painel-form-titulo"><span id="icone-emitente"></span> Dados do emitente</p>
+            <div class="grid-campos duas-colunas">
+              <label class="campo">Razão social usada nas notas
+                <input type="text" id="campo-razao-emitente" placeholder="Deixe em branco para usar a razão social cadastrada" />
+              </label>
+              <label class="campo">Regime tributário
+                <input type="text" id="campo-regime-emitente" placeholder="Ex: Simples Nacional" />
+              </label>
+            </div>
+          </div>
+
+          <div class="painel-form">
+            <p class="painel-form-titulo"><span id="icone-provider"></span> Provedor de emissão</p>
+            <div class="grid-campos duas-colunas">
+              <label class="campo">Provedor
+                <select id="campo-provider">
+                  <option value="">Não configurado</option>
+                  <option value="focus_nfe">Focus NFe</option>
+                  <option value="plugnotas">PlugNotas</option>
+                </select>
+              </label>
+              <label class="campo">Ambiente
+                <select id="campo-ambiente">
+                  <option value="homologacao">Homologação (testes)</option>
+                  <option value="producao">Produção</option>
+                </select>
+              </label>
+            </div>
+            <label class="campo largo" style="margin-top:10px;">Token da API
+              <input type="password" id="campo-token" placeholder="Cole aqui o token gerado no painel do provedor" />
+            </label>
+            <p style="font-size:11px; color:#6b7280; margin-top:4px;" id="texto-token-atual"></p>
+
+            <div class="grid-campos duas-colunas" style="margin-top:10px;">
+              <label class="campo">Série NFC-e
+                <input type="text" id="campo-serie-nfce" placeholder="Ex: 1" />
+              </label>
+              <label class="campo">Série NFe
+                <input type="text" id="campo-serie-nfe" placeholder="Ex: 1" />
+              </label>
+            </div>
+          </div>
+
+          <div class="painel-form">
+            <p class="painel-form-titulo"><span id="icone-certificado"></span> Certificado digital (A1, .pfx)</p>
+            <div class="zona-upload" id="zona-upload-certificado">
+              <div id="icone-upload-certificado"></div>
+              <div>Clique para enviar o arquivo .pfx do certificado</div>
+            </div>
+            <input type="file" id="campo-certificado" accept=".pfx,.p12" hidden />
+            <p style="font-size:12px; margin-top:8px;" id="texto-certificado-atual"></p>
+
+            <div class="grid-campos duas-colunas" style="margin-top:10px;">
+              <label class="campo">Senha do certificado
+                <input type="password" id="campo-senha-certificado" placeholder="Somente se for trocar" />
+              </label>
+              <label class="campo">Validade
+                <input type="date" id="campo-validade-certificado" />
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="painel-form">
+            <p class="painel-form-titulo">Status desta configuração</p>
+            <div id="resumo-status-config" style="font-size:13px;"></div>
+          </div>
+
+          <div class="painel-form">
+            <p class="painel-form-titulo">Como funciona</p>
+            <p style="font-size:12px; color:#6b7280;">
+              O sistema decide sozinho o tipo de nota: empresas do tipo <strong>varejo</strong> emitem NFC-e
+              (consumidor final) e empresas do tipo <strong>atacado</strong> emitem NFe modelo 55 (empresa
+              para empresa).
+            </p>
+            <p style="font-size:12px; color:#6b7280;">
+              Token, senha do certificado e o certificado em si ficam criptografados no banco de dados.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="barra-acoes-formulario painel-form">
+        <span></span>
+        <button type="button" class="botao primario" id="btn-salvar-config"><span id="icone-salvar"></span> Salvar configuração</button>
+      </div>
+      <div class="mensagem" id="mensagem-config"></div>
     </main>
   </div>
   <script src="js/shared/api.js"></script>
   <script src="js/shared/layout.js"></script>
-  <script>initLayout('config');</script>
+  <script src="js/pages/configuracoes.js"></script>
 </body>
 </html>

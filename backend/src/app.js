@@ -9,6 +9,7 @@ const vendasRoutes = require('./modules/vendas/vendas.routes');
 const osRoutes = require('./modules/ordens-servico/os.routes');
 const usuariosRoutes = require('./modules/usuarios/usuarios.routes');
 const importacaoRoutes = require('./modules/importacao/importacao.routes');
+const notasFiscaisRoutes = require('./modules/notas-fiscais/notas-fiscais.routes');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
@@ -29,6 +30,7 @@ app.use('/api/vendas', vendasRoutes);
 app.use('/api/ordens-servico', osRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/importacao', importacaoRoutes);
+app.use('/api/notas-fiscais', notasFiscaisRoutes);
 
 app.use(errorHandler);
 

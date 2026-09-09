@@ -480,6 +480,19 @@ function preencherPainelEntrega() {
     document.getElementById('campo-garantia-dias').value = osAtual.garantia.prazo_dias;
     document.getElementById('campo-garantia-cobertura').value = osAtual.garantia.cobertura || '';
   }
+  atualizarBlocoNotaFiscalOs();
+}
+
+async function atualizarBlocoNotaFiscalOs() {
+  const notas = await api.get(`/notas-fiscais/origem/os/${osId}`).catch(() => []);
+  renderizarBlocoNotaFiscal(
+    document.getElementById('bloco-nota-fiscal-os'),
+    'os',
+    Number(osId),
+    notas,
+    osAtual.status !== 'entregue',
+    'Só é possível emitir nota depois que a OS for entregue'
+  );
 }
 
 async function registrarEntregaOs() {
