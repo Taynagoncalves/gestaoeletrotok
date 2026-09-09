@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --accent: #f5821f;
+  --accent-hover: #e07213;
+  --bg-page: #f5f6f8;
+  --bg-card: #ffffff;
+  --border: #e5e7eb;
+  --text-principal: #14171f;
+  --text-secundario: #6b7280;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --sombra-lg: 0 8px 24px rgba(16, 24, 40, 0.08);
+  --accent-red: #dc2626;
+  --accent-red-soft: #fee2e2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-page);
+  font-family: 'Inter', 'Segoe UI', Arial, Helvetica, sans-serif;
+  color: var(--text-principal);
+}
+
+.login-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--sombra-lg);
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+
+.login-logo {
+  height: 48px;
+  margin-bottom: 20px;
+}
+
+.login-card h1 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.login-subtitulo {
+  margin: 0 0 24px;
+  font-size: 13px;
+  color: var(--text-secundario);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secundario);
+  font-weight: 500;
+}
+
+input {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text-principal);
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+button[type='submit'] {
+  margin-top: 6px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 11px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+button[type='submit']:hover {
+  background: var(--accent-hover);
+}
+
+button[type='submit']:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.mensagem {
+  font-size: 13px;
+  border-radius: var(--radius-md);
+  padding: 9px 12px;
+}
+
+.mensagem.erro {
+  background: var(--accent-red-soft);
+  color: var(--accent-red);
+}

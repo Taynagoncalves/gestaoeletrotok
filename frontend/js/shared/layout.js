@@ -65,8 +65,50 @@ const MENU_ITENS = [
   { chave: 'config', rotulo: 'Configurações', href: 'configuracoes.html', icone: 'settings' },
 ];
 
-function renderSidebar(chaveAtiva) {
-  const itens = MENU_ITENS.map(
+// Telas que cada perfil pode acessar. "admin" sempre tem acesso a tudo.
+const PERMISSOES_POR_PERFIL = {
+  admin: null,
+  caixa: ['dashboard', 'produtos', 'estoque', 'pdv', 'notas', 'financeiro', 'clientes'],
+  tecnico: ['dashboard', 'os', 'estoque', 'produtos', 'clientes'],
+};
+
+const ROTULO_PERFIL = {
+  admin: 'Administrador',
+  caixa: 'Operador de caixa',
+  tecnico: 'Técnico de assistência',
+};
+
+function usuarioLogado() {
+  try {
+    return JSON.parse(localStorage.getItem('usuarioLogado'));
+  } catch {
+    return null;
+  }
+}
+
+function chavesPermitidas(usuario) {
+  if (!usuario) return [];
+  const permitidas = PERMISSOES_POR_PERFIL[usuario.perfil];
+  return permitidas === null ? MENU_ITENS.map((item) => item.chave) : permitidas || [];
+}
+
+function exigirLogin() {
+  const usuario = usuarioLogado();
+  if (!usuario) {
+    window.location.href = 'login.html';
+    return null;
+  }
+  return usuario;
+}
+
+function sair() {
+  localStorage.removeItem('usuarioLogado');
+  window.location.href = 'login.html';
+}
+
+function renderSidebar(chaveAtiva, usuario) {
+  const permitidas = chavesPermitidas(usuario);
+  const itens = MENU_ITENS.filter((item) => permitidas.includes(item.chave)).map(
     (item) => `
       <li>
         <a href="${item.href}" class="${item.chave === chaveAtiva ? 'ativo' : ''}">
@@ -115,7 +157,7 @@ function empresaAtualStorage() {
   };
 }
 
-async function renderTopbar() {
+async function renderTopbar(usuario) {
   document.getElementById('app-topbar').innerHTML = `
     <div class="topbar-busca">
       <span class="topbar-busca-icone">${svgIcone('search')}</span>
@@ -146,16 +188,32 @@ async function renderTopbar() {
 
       <div class="topbar-divisor"></div>
 
-      <button type="button" class="topbar-usuario" id="btn-topbar-usuario">
-        <div class="topbar-usuario-avatar">${svgIcone('user')}</div>
-        <div class="topbar-usuario-info">
-          <div class="topbar-usuario-nome">Usuário</div>
-          <small>Login não configurado</small>
+      <div class="topbar-usuario-wrapper" style="position:relative;">
+        <button type="button" class="topbar-usuario" id="btn-topbar-usuario">
+          <div class="topbar-usuario-avatar">${svgIcone('user')}</div>
+          <div class="topbar-usuario-info">
+            <div class="topbar-usuario-nome">${usuario ? usuario.nome : 'Usuário'}</div>
+            <small>${usuario ? ROTULO_PERFIL[usuario.perfil] || usuario.perfil : 'Login não configurado'}</small>
+          </div>
+          <span class="topbar-usuario-chevron">${svgIcone('chevron-down')}</span>
+        </button>
+        <div id="menu-topbar-usuario" hidden style="position:absolute; right:0; top:calc(100% + 6px); background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); box-shadow:var(--sombra-md); min-width:160px; overflow:hidden; z-index:20;">
+          <button type="button" id="btn-sair" style="display:block; width:100%; text-align:left; padding:10px 14px; background:none; border:none; cursor:pointer; font-size:13px; color:var(--text-principal);">Sair</button>
         </div>
-        <span class="topbar-usuario-chevron">${svgIcone('chevron-down')}</span>
-      </button>
+      </div>
     </div>
   `;
+
+  const btnUsuario = document.getElementById('btn-topbar-usuario');
+  const menuUsuario = document.getElementById('menu-topbar-usuario');
+  btnUsuario.addEventListener('click', (event) => {
+    event.stopPropagation();
+    menuUsuario.hidden = !menuUsuario.hidden;
+  });
+  document.addEventListener('click', () => {
+    menuUsuario.hidden = true;
+  });
+  document.getElementById('btn-sair').addEventListener('click', sair);
 
   const store = empresaAtualStorage();
   const selectEmpresa = document.getElementById('topbar-select-empresa');
@@ -246,6 +304,14 @@ function empresaSelecionada() {
 }
 
 async function initLayout(chaveAtiva) {
-  renderSidebar(chaveAtiva);
-  await renderTopbar();
+  const usuario = exigirLogin();
+  if (!usuario) return;
+
+  if (!chavesPermitidas(usuario).includes(chaveAtiva)) {
+    window.location.href = 'index.html';
+    return;
+  }
+
+  renderSidebar(chaveAtiva, usuario);
+  await renderTopbar(usuario);
 }

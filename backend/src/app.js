@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const authRoutes = require('./modules/auth/auth.routes');
 const empresasRoutes = require('./modules/empresas/empresas.routes');
 const fornecedoresRoutes = require('./modules/fornecedores/fornecedores.routes');
 const produtosRoutes = require('./modules/produtos/produtos.routes');
@@ -23,6 +24,7 @@ app.use(express.json({ limit: '25mb' }));
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
+app.use('/api/auth', authRoutes);
 app.use('/api/empresas', empresasRoutes);
 app.use('/api/fornecedores', fornecedoresRoutes);
 app.use('/api/produtos', produtosRoutes);
