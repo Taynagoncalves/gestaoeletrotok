@@ -169,8 +169,24 @@ async function listar(empresaId, filtros) {
   return repository.listar(empresaId, filtros);
 }
 
+async function produtosMaisVendidos(empresaId, limite) {
+  if (!empresaId) {
+    throw new AppError('Empresa é obrigatória.');
+  }
+  return repository.produtosMaisVendidos(empresaId, Number(limite) || 5);
+}
+
+async function totalPorDia(empresaId, dias) {
+  if (!empresaId) {
+    throw new AppError('Empresa é obrigatória.');
+  }
+  return repository.totalPorDia(empresaId, Number(dias) || 7);
+}
+
 module.exports = {
   registrarVenda,
   buscarPorId,
   listar,
+  produtosMaisVendidos,
+  totalPorDia,
 };

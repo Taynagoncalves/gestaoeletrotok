@@ -3,68 +3,67 @@
 <head>
   <meta charset="UTF-8" />
   <title>Eletrotok - Fornecedores</title>
+  <link rel="stylesheet" href="css/layout.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <header>
-    <h1>Eletrotok - Gestão</h1>
-    <nav>
-      <a href="index.html">Empresas</a>
-      <a href="fornecedores.html" class="ativo">Fornecedores</a>
-      <a href="produtos.html">Produtos</a>
-      <a href="estoque.html">Estoque</a>
-      <a href="pdv.html">PDV</a>
-    </nav>
-  </header>
+  <div id="app-sidebar"></div>
 
-  <main>
-    <section class="card">
-      <h2>Novo fornecedor</h2>
-      <form id="form-fornecedor">
-        <label class="campo-largo">Razão social
-          <input type="text" name="razao_social" required />
-        </label>
-        <label>CNPJ
-          <input type="text" name="cnpj" />
-        </label>
-        <label>Nome do contato
-          <input type="text" name="contato_nome" />
-        </label>
-        <label>Telefone do contato
-          <input type="text" name="contato_telefone" />
-        </label>
-        <label>E-mail do contato
-          <input type="text" name="contato_email" />
-        </label>
-        <label class="campo-largo">Condições de pagamento
-          <input type="text" name="condicoes_pagamento" placeholder="Ex: 30/60/90 dias" />
-        </label>
-        <div class="acoes">
-          <button type="submit">Salvar</button>
-          <button type="button" class="btn-link" id="btn-cancelar-edicao" hidden>Cancelar edição</button>
-        </div>
-        <div class="mensagem" id="mensagem-fornecedor"></div>
-      </form>
-    </section>
+  <div id="app-conteudo">
+    <div id="app-topbar"></div>
+    <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
 
-    <section class="card">
-      <h2>Fornecedores cadastrados</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Razão social</th>
-            <th>CNPJ</th>
-            <th>Contato</th>
-            <th>Ativo</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="tabela-fornecedores"></tbody>
-      </table>
-    </section>
-  </main>
+    <main id="app-main">
+      <section class="card">
+        <h2>Novo fornecedor</h2>
+        <form id="form-fornecedor">
+          <label class="campo-largo">Razão social
+            <input type="text" name="razao_social" required />
+          </label>
+          <label>CNPJ
+            <input type="text" name="cnpj" />
+          </label>
+          <label>Nome do contato
+            <input type="text" name="contato_nome" />
+          </label>
+          <label>Telefone do contato
+            <input type="text" name="contato_telefone" />
+          </label>
+          <label>E-mail do contato
+            <input type="text" name="contato_email" />
+          </label>
+          <label class="campo-largo">Condições de pagamento
+            <input type="text" name="condicoes_pagamento" placeholder="Ex: 30/60/90 dias" />
+          </label>
+          <div class="acoes">
+            <button type="submit">Salvar</button>
+            <button type="button" class="btn-link" id="btn-cancelar-edicao" hidden>Cancelar edição</button>
+          </div>
+          <div class="mensagem" id="mensagem-fornecedor"></div>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Fornecedores cadastrados</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Razão social</th>
+              <th>CNPJ</th>
+              <th>Contato</th>
+              <th>Ativo</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tabela-fornecedores"></tbody>
+        </table>
+      </section>
+    </main>
+  </div>
 
   <script src="js/shared/api.js"></script>
+  <script src="js/shared/layout.js"></script>
+  <script>initLayout('fornecedores');</script>
   <script src="js/pages/fornecedores.js"></script>
 </body>
 </html>

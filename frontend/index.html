@@ -2,79 +2,113 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Eletrotok - Gestão</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <title>Eletrotok - Dashboard</title>
+  <link rel="stylesheet" href="css/layout.css" />
 </head>
 <body>
-  <header>
-    <h1>Eletrotok - Gestão</h1>
-    <nav>
-      <a href="index.html" class="ativo">Empresas</a>
-      <a href="fornecedores.html">Fornecedores</a>
-      <a href="produtos.html">Produtos</a>
-      <a href="estoque.html">Estoque</a>
-      <a href="pdv.html">PDV</a>
-    </nav>
-  </header>
+  <div id="app-sidebar"></div>
 
-  <main>
-    <section class="card">
-      <h2>Nova empresa</h2>
-      <form id="form-empresa">
-        <label>Razão social
-          <input type="text" name="razao_social" required />
-        </label>
-        <label>Nome fantasia
-          <input type="text" name="nome_fantasia" />
-        </label>
-        <label>CNPJ
-          <input type="text" name="cnpj" id="campo-cnpj" required />
-        </label>
-        <label>Tipo
-          <select name="tipo" required>
-            <option value="">Selecione</option>
-            <option value="atacado">Atacado</option>
-            <option value="varejo">Varejo</option>
-          </select>
-        </label>
-        <label>Regime tributário
-          <input type="text" name="regime_tributario" />
-        </label>
-        <label>Inscrição estadual
-          <input type="text" name="inscricao_estadual" />
-        </label>
-        <label class="campo-largo">Endereço
-          <input type="text" name="endereco" />
-        </label>
-        <label>Telefone
-          <input type="text" name="telefone" />
-        </label>
-        <div class="acoes">
-          <button type="submit">Salvar</button>
-          <button type="button" class="btn-link" id="btn-cancelar-edicao" hidden>Cancelar edição</button>
+  <div id="app-conteudo">
+    <div id="app-topbar"></div>
+    <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
+
+    <main id="app-main">
+      <div class="dashboard-cabecalho">
+        <div>
+          <h1 id="saudacao">Olá!</h1>
+          <p>Aqui está um resumo da sua loja hoje.</p>
         </div>
-        <div class="mensagem" id="mensagem-empresa"></div>
-      </form>
-    </section>
+        <div id="data-hora-atual" style="color:#6b7280; font-size:13px;"></div>
+      </div>
 
-    <section class="card">
-      <h2>Empresas cadastradas</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Razão social</th>
-            <th>CNPJ</th>
-            <th>Tipo</th>
-            <th>Ativa</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="tabela-empresas"></tbody>
-      </table>
-    </section>
-  </main>
+      <div class="cards-resumo">
+        <div class="card-resumo">
+          <div class="card-resumo-icone verde">🛒</div>
+          <div>
+            <p class="card-resumo-titulo">Vendas do dia</p>
+            <p class="card-resumo-valor" id="valor-vendas-dia">R$ 0,00</p>
+            <span id="qtd-vendas-dia" style="font-size:12px; color:#6b7280;"></span>
+          </div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone azul">👥</div>
+          <div>
+            <p class="card-resumo-titulo">Clientes atendidos hoje</p>
+            <p class="card-resumo-valor" id="valor-clientes-dia">0</p>
+          </div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone laranja">📦</div>
+          <div>
+            <p class="card-resumo-titulo">Produtos em estoque baixo</p>
+            <p class="card-resumo-valor" id="valor-estoque-baixo">0</p>
+            <a class="card-resumo-link" href="estoque.html">Ver produtos</a>
+          </div>
+        </div>
+        <div class="card-resumo">
+          <div class="card-resumo-icone roxo">🔧</div>
+          <div>
+            <p class="card-resumo-titulo">Ordens de serviço</p>
+            <p class="card-resumo-valor">Em breve</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-dashboard">
+        <div class="painel">
+          <div class="painel-cabecalho">
+            <h2>Vendas dos últimos 7 dias</h2>
+          </div>
+          <div class="grafico-barras" id="grafico-vendas-semana"></div>
+        </div>
+
+        <div class="painel">
+          <div class="painel-cabecalho">
+            <h2>Produtos mais vendidos</h2>
+          </div>
+          <ul class="lista-produtos" id="lista-produtos-mais-vendidos"></ul>
+        </div>
+      </div>
+
+      <div class="grid-dashboard">
+        <div class="painel">
+          <div class="painel-cabecalho">
+            <h2>Estoque baixo</h2>
+            <a href="estoque.html">Ver todos</a>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Produto</th><th>Saldo</th><th>Mínimo</th></tr>
+            </thead>
+            <tbody id="tabela-dashboard-estoque-baixo"></tbody>
+          </table>
+        </div>
+
+        <div class="painel">
+          <div class="painel-cabecalho">
+            <h2>Ordens de Serviço pendentes</h2>
+          </div>
+          <p style="color:#6b7280; font-size:13px;">Módulo de Ordem de Serviço em construção.</p>
+        </div>
+      </div>
+
+      <div class="painel">
+        <div class="painel-cabecalho">
+          <h2>Ações rápidas</h2>
+        </div>
+        <div class="acoes-rapidas">
+          <a class="acao-rapida verde" href="pdv.html">🛒 Nova Venda (PDV)</a>
+          <a class="acao-rapida azul" href="ordem-servico.html">🔧 Abrir Ordem de Serviço</a>
+          <a class="acao-rapida roxo" href="notas-fiscais.html">📄 Emitir Nota Fiscal</a>
+          <a class="acao-rapida laranja" href="produtos.html">📦 Cadastrar Produto</a>
+          <a class="acao-rapida cinza" href="relatorios.html">📊 Ver Relatórios</a>
+        </div>
+      </div>
+    </main>
+  </div>
 
   <script src="js/shared/api.js"></script>
-  <script src="js/pages/empresas.js"></script>
+  <script src="js/shared/layout.js"></script>
+  <script src="js/pages/dashboard.js"></script>
 </body>
 </html>

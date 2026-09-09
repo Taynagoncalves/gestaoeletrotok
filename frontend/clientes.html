@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Eletrotok - Clientes</title>
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app-sidebar"></div>
+
+  <div id="app-conteudo">
+    <div id="app-topbar"></div>
+    <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
+
+    <main id="app-main">
+      <section class="card">
+        <h2>Novo cliente</h2>
+        <form id="form-cliente">
+          <label class="campo-largo">Nome
+            <input type="text" name="nome" required />
+          </label>
+          <label>CPF/CNPJ
+            <input type="text" name="cpf_cnpj" />
+          </label>
+          <label>Telefone
+            <input type="text" name="telefone" />
+          </label>
+          <label class="campo-largo">Endereço
+            <input type="text" name="endereco" />
+          </label>
+          <div class="acoes">
+            <button type="submit">Salvar</button>
+            <button type="button" class="btn-link" id="btn-cancelar-edicao" hidden>Cancelar edição</button>
+          </div>
+          <div class="mensagem" id="mensagem-cliente"></div>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Clientes cadastrados</h2>
+        <input type="text" id="campo-busca" placeholder="Buscar por nome, CPF/CNPJ ou telefone..." style="margin-bottom:12px; width:100%; max-width:320px; padding:8px; border:1px solid #ccc; border-radius:4px;" />
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>CPF/CNPJ</th>
+              <th>Telefone</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tabela-clientes"></tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/shared/api.js"></script>
+  <script src="js/shared/layout.js"></script>
+  <script>initLayout('clientes');</script>
+  <script src="js/pages/clientes.js"></script>
+</body>
+</html>

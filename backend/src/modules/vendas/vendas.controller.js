@@ -18,8 +18,20 @@ async function listar(req, res) {
   res.json(vendas);
 }
 
+async function produtosMaisVendidos(req, res) {
+  const resultado = await service.produtosMaisVendidos(req.query.empresa_id, req.query.limite);
+  res.json(resultado);
+}
+
+async function totalPorDia(req, res) {
+  const resultado = await service.totalPorDia(req.query.empresa_id, req.query.dias);
+  res.json(resultado);
+}
+
 module.exports = {
   registrarVenda,
   buscarPorId,
   listar,
+  produtosMaisVendidos,
+  totalPorDia,
 };

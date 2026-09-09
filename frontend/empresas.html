@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Eletrotok - Empresas</title>
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app-sidebar"></div>
+
+  <div id="app-conteudo">
+    <div id="app-topbar"></div>
+    <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
+
+    <main id="app-main">
+      <section class="card">
+        <h2>Nova empresa</h2>
+        <form id="form-empresa">
+          <label>Razão social
+            <input type="text" name="razao_social" required />
+          </label>
+          <label>Nome fantasia
+            <input type="text" name="nome_fantasia" />
+          </label>
+          <label>CNPJ
+            <input type="text" name="cnpj" id="campo-cnpj" required />
+          </label>
+          <label>Tipo
+            <select name="tipo" required>
+              <option value="">Selecione</option>
+              <option value="atacado">Atacado</option>
+              <option value="varejo">Varejo</option>
+            </select>
+          </label>
+          <label>Regime tributário
+            <input type="text" name="regime_tributario" />
+          </label>
+          <label>Inscrição estadual
+            <input type="text" name="inscricao_estadual" />
+          </label>
+          <label class="campo-largo">Endereço
+            <input type="text" name="endereco" />
+          </label>
+          <label>Telefone
+            <input type="text" name="telefone" />
+          </label>
+          <div class="acoes">
+            <button type="submit">Salvar</button>
+            <button type="button" class="btn-link" id="btn-cancelar-edicao" hidden>Cancelar edição</button>
+          </div>
+          <div class="mensagem" id="mensagem-empresa"></div>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Empresas cadastradas</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Razão social</th>
+              <th>CNPJ</th>
+              <th>Tipo</th>
+              <th>Ativa</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tabela-empresas"></tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/shared/api.js"></script>
+  <script src="js/shared/layout.js"></script>
+  <script>initLayout('empresas');</script>
+  <script src="js/pages/empresas.js"></script>
+</body>
+</html>

@@ -3,21 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <title>Eletrotok - Produtos</title>
+  <link rel="stylesheet" href="css/layout.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <header>
-    <h1>Eletrotok - Gestão</h1>
-    <nav>
-      <a href="index.html">Empresas</a>
-      <a href="fornecedores.html">Fornecedores</a>
-      <a href="produtos.html" class="ativo">Produtos</a>
-      <a href="estoque.html">Estoque</a>
-      <a href="pdv.html">PDV</a>
-    </nav>
-  </header>
+  <div id="app-sidebar"></div>
 
-  <main>
+  <div id="app-conteudo">
+    <div id="app-topbar"></div>
+    <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
+
+    <main id="app-main">
     <section class="card">
       <h2>Novo produto</h2>
       <form id="form-produto">
@@ -82,9 +78,12 @@
       </table>
       <div class="mensagem" id="mensagem-precos"></div>
     </section>
-  </main>
+    </main>
+  </div>
 
   <script src="js/shared/api.js"></script>
+  <script src="js/shared/layout.js"></script>
+  <script>initLayout('produtos');</script>
   <script src="js/pages/produtos.js"></script>
 </body>
 </html>

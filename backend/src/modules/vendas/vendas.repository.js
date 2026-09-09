@@ -65,12 +65,41 @@ async function listar(empresaId, { de, ate } = {}) {
   }
 
   const [rows] = await db.query(
-    `SELECT v.id, v.data, v.total, v.status, c.nome AS cliente_nome
+    `SELECT v.id, v.data, v.total, v.status, v.cliente_id, c.nome AS cliente_nome
      FROM vendas v
      LEFT JOIN clientes c ON c.id = v.cliente_id
      WHERE ${condicoes.join(' AND ')}
      ORDER BY v.data DESC`,
     params
+  );
+  return rows;
+}
+
+async function produtosMaisVendidos(empresaId, limite) {
+  const limiteSeguro = Number.isInteger(limite) ? limite : 5;
+  const [rows] = await db.query(
+    `SELECT vi.produto_id, p.nome, SUM(vi.quantidade) AS quantidade_vendida,
+            SUM(vi.quantidade * vi.preco_unitario) AS total_vendido
+     FROM venda_itens vi
+     JOIN vendas v ON v.id = vi.venda_id
+     JOIN produtos p ON p.id = vi.produto_id
+     WHERE v.empresa_id = ? AND v.status = 'concluida'
+     GROUP BY vi.produto_id, p.nome
+     ORDER BY quantidade_vendida DESC
+     LIMIT ${limiteSeguro}`,
+    [empresaId]
+  );
+  return rows;
+}
+
+async function totalPorDia(empresaId, dias) {
+  const [rows] = await db.query(
+    `SELECT DATE(data) AS dia, SUM(total) AS total, COUNT(*) AS quantidade
+     FROM vendas
+     WHERE empresa_id = ? AND status = 'concluida' AND data >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+     GROUP BY DATE(data)
+     ORDER BY dia`,
+    [empresaId, dias]
   );
   return rows;
 }
@@ -81,4 +110,6 @@ module.exports = {
   inserirPagamento,
   buscarPorId,
   listar,
+  produtosMaisVendidos,
+  totalPorDia,
 };
