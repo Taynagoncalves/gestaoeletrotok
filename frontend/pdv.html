@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Eletrotok - PDV</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>Eletrotok - Gestão</h1>
+    <nav>
+      <a href="index.html">Empresas</a>
+      <a href="fornecedores.html">Fornecedores</a>
+      <a href="produtos.html">Produtos</a>
+      <a href="estoque.html">Estoque</a>
+      <a href="pdv.html" class="ativo">PDV</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Frente de caixa</h2>
+      <form onsubmit="return false" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+        <label>Empresa
+          <select id="select-empresa"></select>
+        </label>
+        <label>Cliente (opcional)
+          <select id="select-cliente">
+            <option value="">Consumidor não identificado</option>
+          </select>
+        </label>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Adicionar item</h2>
+      <form id="form-add-item" style="display:grid; grid-template-columns: 2fr 1fr 1fr auto; gap:12px; align-items:end;">
+        <label>Produto
+          <select id="select-produto" required></select>
+        </label>
+        <label id="wrapper-imei">Item (IMEI)
+          <select id="select-item-imei"></select>
+        </label>
+        <label id="wrapper-quantidade">Quantidade
+          <input type="number" id="campo-quantidade" min="1" value="1" />
+        </label>
+        <button type="submit">Adicionar</button>
+      </form>
+      <div class="mensagem" id="mensagem-item"></div>
+    </section>
+
+    <section class="card">
+      <h2>Carrinho</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>IMEI</th>
+            <th>Qtd</th>
+            <th>Preço unit.</th>
+            <th>Subtotal</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tabela-carrinho"></tbody>
+      </table>
+      <p><strong>Total: R$ <span id="total-carrinho">0,00</span></strong></p>
+    </section>
+
+    <section class="card">
+      <h2>Pagamento</h2>
+      <form id="form-pagamento" style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:12px; align-items:end;">
+        <label>Forma
+          <select id="campo-forma">
+            <option value="dinheiro">Dinheiro</option>
+            <option value="debito">Débito</option>
+            <option value="credito">Crédito</option>
+            <option value="pix">PIX</option>
+          </select>
+        </label>
+        <label id="wrapper-parcelas" hidden>Parcelas
+          <input type="number" id="campo-parcelas" min="1" value="1" />
+        </label>
+        <label>Valor (R$)
+          <input type="number" id="campo-valor-pagamento" step="0.01" min="0" />
+        </label>
+        <button type="submit">Adicionar pagamento</button>
+      </form>
+      <table>
+        <thead>
+          <tr><th>Forma</th><th>Parcelas</th><th>Valor</th><th></th></tr>
+        </thead>
+        <tbody id="tabela-pagamentos"></tbody>
+      </table>
+      <p>Total pago: R$ <span id="total-pago">0,00</span></p>
+      <button type="button" id="btn-finalizar">Finalizar venda</button>
+      <div class="mensagem" id="mensagem-venda"></div>
+    </section>
+
+    <section class="card" id="secao-comprovante" hidden>
+      <h2>Comprovante</h2>
+      <pre id="comprovante" style="white-space:pre-wrap; font-family: monospace;"></pre>
+      <button type="button" id="btn-nova-venda">Nova venda</button>
+    </section>
+  </main>
+
+  <script src="js/shared/api.js"></script>
+  <script src="js/pages/pdv.js"></script>
+</body>
+</html>

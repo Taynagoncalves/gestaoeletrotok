@@ -44,6 +44,14 @@ async function definirPreco(produtoId, empresaId, precoVenda) {
   );
 }
 
+async function buscarPreco(produtoId, empresaId) {
+  const [rows] = await db.query(
+    'SELECT preco_venda FROM tabela_precos WHERE produto_id = ? AND empresa_id = ?',
+    [produtoId, empresaId]
+  );
+  return rows[0]?.preco_venda ?? null;
+}
+
 async function listarPrecos(produtoId) {
   const [rows] = await db.query(
     `SELECT tp.empresa_id, e.razao_social AS empresa_nome, tp.preco_venda
@@ -61,5 +69,6 @@ module.exports = {
   criar,
   atualizar,
   definirPreco,
+  buscarPreco,
   listarPrecos,
 };

@@ -67,6 +67,15 @@ async function saldoNaoSerializado(produtoId, empresaId) {
   return rows[0]?.quantidade ?? 0;
 }
 
+async function buscarItemPorId(id) {
+  const [rows] = await db.query('SELECT * FROM produto_itens WHERE id = ?', [id]);
+  return rows[0] || null;
+}
+
+async function marcarStatusItem(connection, id, status) {
+  await connection.query('UPDATE produto_itens SET status = ? WHERE id = ?', [status, id]);
+}
+
 async function contarItensEmEstoque(produtoId, empresaId) {
   const [rows] = await db.query(
     `SELECT COUNT(*) AS total FROM produto_itens
@@ -132,6 +141,8 @@ module.exports = {
   inserirItemSerializado,
   ajustarSaldoNaoSerializado,
   saldoNaoSerializado,
+  buscarItemPorId,
+  marcarStatusItem,
   contarItensEmEstoque,
   listarItensEmEstoque,
   custoMaisRecente,

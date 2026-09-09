@@ -4,6 +4,8 @@ const empresasRoutes = require('./modules/empresas/empresas.routes');
 const fornecedoresRoutes = require('./modules/fornecedores/fornecedores.routes');
 const produtosRoutes = require('./modules/produtos/produtos.routes');
 const estoqueRoutes = require('./modules/estoque/estoque.routes');
+const clientesRoutes = require('./modules/clientes/clientes.routes');
+const vendasRoutes = require('./modules/vendas/vendas.routes');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
@@ -17,6 +19,8 @@ app.use('/api/empresas', empresasRoutes);
 app.use('/api/fornecedores', fornecedoresRoutes);
 app.use('/api/produtos', produtosRoutes);
 app.use('/api/estoque', estoqueRoutes);
+app.use('/api/clientes', clientesRoutes);
+app.use('/api/vendas', vendasRoutes);
 
 app.use(errorHandler);
 
