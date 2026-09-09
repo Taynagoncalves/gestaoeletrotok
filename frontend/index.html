@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>Eletrotok - Dashboard</title>
   <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/produto-form.css" />
 </head>
 <body>
   <div id="app-sidebar"></div>
@@ -13,43 +14,53 @@
     <div id="app-faixa-contexto" class="faixa-contexto" hidden></div>
 
     <main id="app-main">
-      <div class="dashboard-cabecalho">
-        <div>
-          <h1 id="saudacao">Olá!</h1>
-          <p>Aqui está um resumo da sua loja hoje.</p>
+      <div class="pagina-cabecalho">
+        <div class="pagina-cabecalho-titulo">
+          <div class="pagina-cabecalho-icone" id="icone-pagina"></div>
+          <div>
+            <h1 id="saudacao">Olá!</h1>
+            <p>Aqui está um resumo da sua loja hoje.</p>
+          </div>
         </div>
-        <div id="data-hora-atual" style="color:#6b7280; font-size:13px;"></div>
+        <div id="data-hora-atual" style="color:var(--text-secundario); font-size:13px; text-align:right;"></div>
       </div>
 
       <div class="cards-resumo">
         <div class="card-resumo">
           <div class="card-resumo-icone verde" id="icone-card-vendas"></div>
-          <div>
+          <div class="card-resumo-corpo">
             <p class="card-resumo-titulo">Vendas do dia</p>
             <p class="card-resumo-valor" id="valor-vendas-dia">R$ 0,00</p>
-            <span id="qtd-vendas-dia" style="font-size:12px; color:#6b7280;"></span>
+            <div class="card-resumo-rodape">
+              <span id="tendencia-vendas-dia"></span>
+              <span class="card-resumo-comparativo" id="qtd-vendas-dia"></span>
+            </div>
           </div>
         </div>
         <div class="card-resumo">
           <div class="card-resumo-icone azul" id="icone-card-clientes"></div>
-          <div>
+          <div class="card-resumo-corpo">
             <p class="card-resumo-titulo">Clientes atendidos hoje</p>
             <p class="card-resumo-valor" id="valor-clientes-dia">0</p>
+            <div class="card-resumo-rodape">
+              <span id="tendencia-clientes-dia"></span>
+            </div>
           </div>
         </div>
         <div class="card-resumo">
           <div class="card-resumo-icone laranja" id="icone-card-estoque"></div>
-          <div>
+          <div class="card-resumo-corpo">
             <p class="card-resumo-titulo">Produtos em estoque baixo</p>
             <p class="card-resumo-valor" id="valor-estoque-baixo">0</p>
-            <a class="card-resumo-link" href="estoque.html">Ver produtos</a>
+            <a class="card-resumo-link" href="estoque.html">Ver produtos →</a>
           </div>
         </div>
         <div class="card-resumo">
           <div class="card-resumo-icone roxo" id="icone-card-os"></div>
-          <div>
-            <p class="card-resumo-titulo">Ordens de serviço</p>
-            <p class="card-resumo-valor">Em breve</p>
+          <div class="card-resumo-corpo">
+            <p class="card-resumo-titulo">Ordens de serviço em andamento</p>
+            <p class="card-resumo-valor" id="valor-os-pendentes">0</p>
+            <a class="card-resumo-link" href="ordem-servico.html">Ver ordens →</a>
           </div>
         </div>
       </div>
@@ -59,18 +70,32 @@
           <div class="painel-cabecalho">
             <h2>Vendas dos últimos 7 dias</h2>
           </div>
-          <div class="grafico-barras" id="grafico-vendas-semana"></div>
+          <div class="grafico-container" style="height:220px;">
+            <canvas id="grafico-vendas-semana"></canvas>
+          </div>
         </div>
 
         <div class="painel">
           <div class="painel-cabecalho">
-            <h2>Produtos mais vendidos</h2>
+            <h2>Vendas por forma de pagamento (hoje)</h2>
           </div>
-          <ul class="lista-produtos" id="lista-produtos-mais-vendidos"></ul>
+          <div class="grafico-container" style="height:220px;">
+            <canvas id="grafico-formas-pagamento"></canvas>
+          </div>
         </div>
       </div>
 
       <div class="grid-dashboard">
+        <div class="painel">
+          <div class="painel-cabecalho">
+            <h2>Produtos mais vendidos</h2>
+            <a href="relatorios.html">Ver relatório completo</a>
+          </div>
+          <div class="grafico-container" style="height:240px;">
+            <canvas id="grafico-produtos-mais-vendidos"></canvas>
+          </div>
+        </div>
+
         <div class="painel">
           <div class="painel-cabecalho">
             <h2>Estoque baixo</h2>
@@ -83,13 +108,19 @@
             <tbody id="tabela-dashboard-estoque-baixo"></tbody>
           </table>
         </div>
+      </div>
 
-        <div class="painel">
-          <div class="painel-cabecalho">
-            <h2>Ordens de Serviço pendentes</h2>
-          </div>
-          <p style="color:#6b7280; font-size:13px;">Módulo de Ordem de Serviço em construção.</p>
+      <div class="painel" style="margin-bottom:16px;">
+        <div class="painel-cabecalho">
+          <h2>Ordens de Serviço em andamento</h2>
+          <a href="ordem-servico.html">Ver todas</a>
         </div>
+        <table>
+          <thead>
+            <tr><th>Nº OS</th><th>Cliente</th><th>Aparelho</th><th>Status</th><th>Prazo</th></tr>
+          </thead>
+          <tbody id="tabela-dashboard-os"></tbody>
+        </table>
       </div>
 
       <div class="painel">
@@ -101,8 +132,10 @@
     </main>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <script src="js/shared/api.js"></script>
   <script src="js/shared/layout.js"></script>
+  <script src="js/shared/os-status.js"></script>
   <script src="js/pages/dashboard.js"></script>
 </body>
 </html>
