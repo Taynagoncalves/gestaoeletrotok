@@ -1,10 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --sidebar-bg: #0a0a0a;
-  --sidebar-bg-hover: #1a1a1a;
-  --sidebar-text: #9a9fac;
-  --sidebar-text-ativo: #ffffff;
+  --preto: #0a0a0a;
+  --sidebar-bg: #ffffff;
+  --sidebar-bg-hover: #f5f6f8;
+  --sidebar-border: #eef0f3;
+  --sidebar-text: #5b6270;
+  --sidebar-text-ativo: #14171f;
   --accent: #f5821f;
   --accent-hover: #e07213;
   --accent-soft: #fff1e2;
@@ -34,6 +36,11 @@
 
 * {
   box-sizing: border-box;
+}
+
+html {
+  scrollbar-gutter: stable;
+  overflow-y: scroll;
 }
 
 body {
@@ -72,6 +79,7 @@ h1, h2, h3 {
   flex-shrink: 0;
   background: var(--sidebar-bg);
   color: var(--sidebar-text);
+  border-right: 1px solid var(--sidebar-border);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -81,7 +89,9 @@ h1, h2, h3 {
 }
 
 .sidebar-topo {
-  padding: 20px 16px;
+  padding: 22px 16px 16px;
+  border-bottom: 1px solid var(--sidebar-border);
+  margin-bottom: 8px;
 }
 
 .sidebar-logo {
@@ -98,7 +108,7 @@ h1, h2, h3 {
 
 .sidebar-nav {
   list-style: none;
-  margin: 12px 0 0;
+  margin: 4px 0 0;
   padding: 0;
   overflow-y: auto;
 }
@@ -118,7 +128,8 @@ h1, h2, h3 {
   text-decoration: none;
   font-size: 13.5px;
   font-weight: 500;
-  transition: background var(--transicao), color var(--transicao);
+  border-left: 3px solid transparent;
+  transition: background var(--transicao), color var(--transicao), border-color var(--transicao);
 }
 
 .sidebar-nav a svg {
@@ -144,9 +155,10 @@ h1, h2, h3 {
 }
 
 .sidebar-nav a.ativo {
-  background: var(--accent);
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(245, 130, 31, 0.35);
+  background: var(--accent-soft);
+  color: var(--accent-hover);
+  border-left-color: var(--accent);
+  font-weight: 600;
 }
 
 .sidebar-nav a.ativo .sidebar-nav-chevron {
@@ -159,12 +171,13 @@ h1, h2, h3 {
 
 .sidebar-suporte {
   background: var(--sidebar-bg-hover);
+  border: 1px solid var(--sidebar-border);
   border-radius: 8px;
   padding: 12px;
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #fff;
+  color: var(--text-principal);
   font-size: 13px;
 }
 
@@ -172,6 +185,7 @@ h1, h2, h3 {
   width: 22px;
   height: 22px;
   flex-shrink: 0;
+  color: var(--accent);
 }
 
 /* ---------- Topbar ---------- */
@@ -323,7 +337,7 @@ h1, h2, h3 {
 }
 
 .topbar-toggle button.ativo {
-  background: var(--sidebar-bg);
+  background: var(--preto);
   color: #fff;
 }
 

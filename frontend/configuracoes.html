@@ -75,6 +75,16 @@
                 <input type="text" id="campo-serie-nfe" placeholder="Ex: 1" />
               </label>
             </div>
+
+            <div class="grid-campos duas-colunas" style="margin-top:10px;">
+              <label class="campo">CSC ID (NFC-e)
+                <input type="text" id="campo-csc-id" placeholder="Gerado no painel da SEFAZ do estado" />
+              </label>
+              <label class="campo">CSC / Token (NFC-e)
+                <input type="password" id="campo-csc-token" placeholder="Somente se for trocar" />
+              </label>
+            </div>
+            <p style="font-size:11px; color:#6b7280; margin-top:4px;" id="texto-csc-atual"></p>
           </div>
 
           <div class="painel-form">
@@ -101,6 +111,8 @@
           <div class="painel-form">
             <p class="painel-form-titulo">Status desta configuração</p>
             <div id="resumo-status-config" style="font-size:13px;"></div>
+            <button type="button" class="botao secundario" id="btn-testar-config" style="width:100%; justify-content:center; margin-top:12px;">Testar configuração fiscal</button>
+            <div class="mensagem" id="mensagem-teste-config"></div>
           </div>
 
           <div class="painel-form">

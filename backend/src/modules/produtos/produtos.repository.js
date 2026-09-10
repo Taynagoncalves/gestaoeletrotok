@@ -51,13 +51,21 @@ async function criar(dados) {
     unidade_medida,
     fornecedor_padrao_id,
     codigo_fornecedor,
+    ncm,
+    cfop_padrao,
+    cest,
+    origem_mercadoria,
+    icms_situacao_tributaria,
+    pis_situacao_tributaria,
+    cofins_situacao_tributaria,
   } = dados;
 
   const [result] = await db.query(
     `INSERT INTO produtos
       (nome, categoria, subcategoria, marca, modelo, referencia_interna, codigo_ean, tipo,
-       descricao, imagem_base64, estoque_minimo, peso_kg, unidade_medida, fornecedor_padrao_id, codigo_fornecedor)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       descricao, imagem_base64, estoque_minimo, peso_kg, unidade_medida, fornecedor_padrao_id, codigo_fornecedor,
+       ncm, cfop_padrao, cest, origem_mercadoria, icms_situacao_tributaria, pis_situacao_tributaria, cofins_situacao_tributaria)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       nome,
       categoria || null,
@@ -74,6 +82,13 @@ async function criar(dados) {
       unidade_medida || 'UN',
       fornecedor_padrao_id || null,
       codigo_fornecedor || null,
+      ncm || null,
+      cfop_padrao || null,
+      cest || null,
+      origem_mercadoria || 0,
+      icms_situacao_tributaria || null,
+      pis_situacao_tributaria || '07',
+      cofins_situacao_tributaria || '07',
     ]
   );
 
@@ -97,13 +112,22 @@ async function atualizar(id, dados) {
     fornecedor_padrao_id,
     codigo_fornecedor,
     ativo,
+    ncm,
+    cfop_padrao,
+    cest,
+    origem_mercadoria,
+    icms_situacao_tributaria,
+    pis_situacao_tributaria,
+    cofins_situacao_tributaria,
   } = dados;
 
   await db.query(
     `UPDATE produtos SET
       nome = ?, categoria = ?, subcategoria = ?, marca = ?, modelo = ?, referencia_interna = ?,
       codigo_ean = ?, descricao = ?, imagem_base64 = ?, estoque_minimo = ?, peso_kg = ?,
-      unidade_medida = ?, fornecedor_padrao_id = ?, codigo_fornecedor = ?, ativo = ?
+      unidade_medida = ?, fornecedor_padrao_id = ?, codigo_fornecedor = ?, ativo = ?,
+      ncm = ?, cfop_padrao = ?, cest = ?, origem_mercadoria = ?, icms_situacao_tributaria = ?,
+      pis_situacao_tributaria = ?, cofins_situacao_tributaria = ?
      WHERE id = ?`,
     [
       nome,
@@ -121,6 +145,13 @@ async function atualizar(id, dados) {
       fornecedor_padrao_id || null,
       codigo_fornecedor || null,
       ativo ?? 1,
+      ncm || null,
+      cfop_padrao || null,
+      cest || null,
+      origem_mercadoria || 0,
+      icms_situacao_tributaria || null,
+      pis_situacao_tributaria || '07',
+      cofins_situacao_tributaria || '07',
       id,
     ]
   );

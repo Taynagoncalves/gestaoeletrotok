@@ -40,6 +40,16 @@ function preencherFormularioParaEdicao(empresa) {
   form.inscricao_estadual.value = empresa.inscricao_estadual || '';
   form.endereco.value = empresa.endereco || '';
   form.telefone.value = empresa.telefone || '';
+  form.logradouro.value = empresa.logradouro || '';
+  form.numero.value = empresa.numero || '';
+  form.complemento.value = empresa.complemento || '';
+  form.bairro.value = empresa.bairro || '';
+  form.municipio.value = empresa.municipio || '';
+  form.codigo_municipio_ibge.value = empresa.codigo_municipio_ibge || '';
+  form.uf.value = empresa.uf || '';
+  form.cep.value = empresa.cep || '';
+  form.cnae.value = empresa.cnae || '';
+  form.inscricao_municipal.value = empresa.inscricao_municipal || '';
   campoCnpj.disabled = true;
   btnCancelarEdicao.hidden = false;
   tituloForm.textContent = `Editando: ${empresa.razao_social}`;

@@ -32,6 +32,10 @@ async function carregarConfig() {
   certificadoNomeArquivoNovo = null;
   document.getElementById('campo-token').value = '';
   document.getElementById('campo-senha-certificado').value = '';
+  document.getElementById('campo-csc-id').value = '';
+  document.getElementById('campo-csc-token').value = '';
+  document.getElementById('mensagem-teste-config').textContent = '';
+  document.getElementById('mensagem-teste-config').className = 'mensagem';
 
   const config = await api.get(`/empresas/${selectEmpresa.value}/config-fiscal`);
 
@@ -53,6 +57,11 @@ async function carregarConfig() {
     ? `Certificado atual: ${config.certificado_nome_arquivo || 'arquivo enviado'}`
     : 'Nenhum certificado enviado ainda.';
 
+  document.getElementById('campo-csc-id').value = config.csc_id || '';
+  document.getElementById('texto-csc-atual').textContent = config.csc_token_configurado
+    ? 'CSC configurado.'
+    : 'Nenhum CSC configurado ainda (necessário para NFC-e).';
+
   const aviso = document.getElementById('aviso-status-config');
   if (config.configurado) {
     aviso.style.background = '#dcfce7';
@@ -70,6 +79,7 @@ async function carregarConfig() {
     <p><strong>Provedor:</strong> ${config.provider || 'não configurado'}</p>
     <p><strong>Ambiente:</strong> ${config.ambiente === 'producao' ? 'Produção' : 'Homologação'}</p>
     <p><strong>Certificado:</strong> ${config.certificado_configurado ? 'Enviado' : 'Não enviado'}</p>
+    <p><strong>Registrado no provedor:</strong> ${config.provider_empresa_id ? 'Sim' : 'Não — clique em "Testar configuração fiscal"'}</p>
     <p><strong>Última atualização:</strong> ${config.atualizada_em ? new Date(config.atualizada_em).toLocaleString('pt-BR') : '-'}</p>
   `;
 }
@@ -109,6 +119,11 @@ document.getElementById('btn-salvar-config').addEventListener('click', async () 
   const senhaCertificado = document.getElementById('campo-senha-certificado').value;
   if (senhaCertificado) payload.certificado_senha = senhaCertificado;
 
+  const cscId = document.getElementById('campo-csc-id').value;
+  if (cscId) payload.csc_id = cscId;
+  const cscToken = document.getElementById('campo-csc-token').value;
+  if (cscToken) payload.csc_token = cscToken;
+
   if (certificadoBase64Novo) {
     payload.certificado_base64 = certificadoBase64Novo;
     payload.certificado_nome_arquivo = certificadoNomeArquivoNovo;
@@ -120,6 +135,26 @@ document.getElementById('btn-salvar-config').addEventListener('click', async () 
     await carregarConfig();
   } catch (erro) {
     mostrarMensagem(erro.message, 'erro');
+  }
+});
+
+document.getElementById('btn-testar-config').addEventListener('click', async (event) => {
+  const botao = event.currentTarget;
+  const mensagemTeste = document.getElementById('mensagem-teste-config');
+  botao.disabled = true;
+  mensagemTeste.textContent = 'Testando conexão com o provedor...';
+  mensagemTeste.className = 'mensagem';
+
+  try {
+    const resultado = await api.post(`/empresas/${selectEmpresa.value}/config-fiscal/testar`, {});
+    mensagemTeste.textContent = resultado.mensagem || 'Configuração testada com sucesso.';
+    mensagemTeste.className = 'mensagem sucesso';
+    await carregarConfig();
+  } catch (erro) {
+    mensagemTeste.textContent = erro.message;
+    mensagemTeste.className = 'mensagem erro';
+  } finally {
+    botao.disabled = false;
   }
 });
 

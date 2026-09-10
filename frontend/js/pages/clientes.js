@@ -35,6 +35,15 @@ function preencherFormularioParaEdicao(cliente) {
   form.cpf_cnpj.value = cliente.cpf_cnpj || '';
   form.telefone.value = cliente.telefone || '';
   form.endereco.value = cliente.endereco || '';
+  form.email.value = cliente.email || '';
+  form.logradouro.value = cliente.logradouro || '';
+  form.numero.value = cliente.numero || '';
+  form.complemento.value = cliente.complemento || '';
+  form.bairro.value = cliente.bairro || '';
+  form.municipio.value = cliente.municipio || '';
+  form.codigo_municipio_ibge.value = cliente.codigo_municipio_ibge || '';
+  form.uf.value = cliente.uf || '';
+  form.cep.value = cliente.cep || '';
   btnCancelarEdicao.hidden = false;
   tituloForm.textContent = `Editando: ${cliente.nome}`;
 }

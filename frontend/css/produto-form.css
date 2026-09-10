@@ -17,7 +17,7 @@
   width: 48px;
   height: 48px;
   border-radius: var(--radius-md, 10px);
-  background: linear-gradient(155deg, var(--sidebar-bg, #0a0a0a), #262626);
+  background: linear-gradient(155deg, var(--preto, #0a0a0a), #262626);
   color: var(--accent, #f5821f);
   display: flex;
   align-items: center;

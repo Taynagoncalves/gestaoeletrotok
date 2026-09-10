@@ -16,9 +16,9 @@
 }
 
 .financeiro-abas-principais button.ativo {
-  background: var(--sidebar-bg);
+  background: var(--preto);
   color: #fff;
-  border-color: var(--sidebar-bg);
+  border-color: var(--preto);
 }
 
 .linha-atrasada {

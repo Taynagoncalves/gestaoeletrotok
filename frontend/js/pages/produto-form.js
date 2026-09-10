@@ -240,6 +240,13 @@ async function carregarProdutoExistente() {
   form.estoque_minimo.value = produto.estoque_minimo || 0;
   form.fornecedor_padrao_id.value = produto.fornecedor_padrao_id || '';
   form.codigo_fornecedor.value = produto.codigo_fornecedor || '';
+  form.ncm.value = produto.ncm || '';
+  form.cest.value = produto.cest || '';
+  form.cfop_padrao.value = produto.cfop_padrao || '';
+  form.origem_mercadoria.value = produto.origem_mercadoria ?? 0;
+  form.icms_situacao_tributaria.value = produto.icms_situacao_tributaria || '';
+  form.pis_situacao_tributaria.value = produto.pis_situacao_tributaria || '07';
+  form.cofins_situacao_tributaria.value = produto.cofins_situacao_tributaria || '07';
   campoAtivo.checked = !!produto.ativo;
   rotuloStatus.textContent = produto.ativo ? 'Ativo (disponível para venda)' : 'Inativo';
 

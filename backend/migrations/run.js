@@ -58,7 +58,12 @@ async function run() {
 
   const files = fs
     .readdirSync(MIGRATIONS_DIR)
-    .filter((file) => file.endsWith('.sql'))
+    // Arquivos com "_" na frente (ex: _dbeaver_setup_completo.sql) sao dumps
+    // de referencia para configuracao manual via DBeaver, nao migrations —
+    // nunca terminam marcados como aplicados e o runner ficaria tentando
+    // rodá-los (e falhando com "table already exists") toda vez que houver
+    // uma migration nova pendente.
+    .filter((file) => file.endsWith('.sql') && !file.startsWith('_'))
     .sort();
 
   for (const file of files) {

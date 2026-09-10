@@ -19,22 +19,84 @@ async function buscarPorId(id) {
 }
 
 async function criar(dados) {
-  const { nome, cpf_cnpj, telefone, endereco } = dados;
+  const {
+    nome,
+    cpf_cnpj,
+    telefone,
+    endereco,
+    email,
+    logradouro,
+    numero,
+    complemento,
+    bairro,
+    municipio,
+    codigo_municipio_ibge,
+    uf,
+    cep,
+  } = dados;
 
   const [result] = await db.query(
-    'INSERT INTO clientes (nome, cpf_cnpj, telefone, endereco) VALUES (?, ?, ?, ?)',
-    [nome, cpf_cnpj || null, telefone || null, endereco || null]
+    `INSERT INTO clientes
+      (nome, cpf_cnpj, telefone, endereco, email, logradouro, numero, complemento, bairro, municipio, codigo_municipio_ibge, uf, cep)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      nome,
+      cpf_cnpj || null,
+      telefone || null,
+      endereco || null,
+      email || null,
+      logradouro || null,
+      numero || null,
+      complemento || null,
+      bairro || null,
+      municipio || null,
+      codigo_municipio_ibge || null,
+      uf || null,
+      cep || null,
+    ]
   );
 
   return buscarPorId(result.insertId);
 }
 
 async function atualizar(id, dados) {
-  const { nome, cpf_cnpj, telefone, endereco } = dados;
+  const {
+    nome,
+    cpf_cnpj,
+    telefone,
+    endereco,
+    email,
+    logradouro,
+    numero,
+    complemento,
+    bairro,
+    municipio,
+    codigo_municipio_ibge,
+    uf,
+    cep,
+  } = dados;
 
   await db.query(
-    'UPDATE clientes SET nome = ?, cpf_cnpj = ?, telefone = ?, endereco = ? WHERE id = ?',
-    [nome, cpf_cnpj || null, telefone || null, endereco || null, id]
+    `UPDATE clientes SET
+      nome = ?, cpf_cnpj = ?, telefone = ?, endereco = ?, email = ?, logradouro = ?, numero = ?,
+      complemento = ?, bairro = ?, municipio = ?, codigo_municipio_ibge = ?, uf = ?, cep = ?
+     WHERE id = ?`,
+    [
+      nome,
+      cpf_cnpj || null,
+      telefone || null,
+      endereco || null,
+      email || null,
+      logradouro || null,
+      numero || null,
+      complemento || null,
+      bairro || null,
+      municipio || null,
+      codigo_municipio_ibge || null,
+      uf || null,
+      cep || null,
+      id,
+    ]
   );
 
   return buscarPorId(id);

@@ -30,6 +30,11 @@ async function salvarConfigFiscal(req, res) {
   res.json(config);
 }
 
+async function testarConfigFiscal(req, res) {
+  const resultado = await service.testarConfigFiscal(req.params.id);
+  res.json(resultado);
+}
+
 module.exports = {
   listar,
   buscarPorId,
@@ -37,4 +42,5 @@ module.exports = {
   atualizar,
   buscarConfigFiscal,
   salvarConfigFiscal,
+  testarConfigFiscal,
 };

@@ -31,6 +31,7 @@
         <button type="button" class="ativo" data-aba="principal">Informações principais</button>
         <button type="button" data-aba="estoque">Estoque e variações</button>
         <button type="button" data-aba="precos">Preços por empresa</button>
+        <button type="button" data-aba="fiscal">Dados fiscais</button>
         <button type="button" data-aba="outras">Outras informações</button>
       </div>
 
@@ -149,6 +150,46 @@
                   <p style="color:#6b7280; font-size:13px;">Salve o produto primeiro para configurar os preços por empresa.</p>
                 </div>
                 <div class="mensagem" id="mensagem-precos"></div>
+              </div>
+            </div>
+
+            <div class="aba-conteudo" data-aba-conteudo="fiscal" hidden>
+              <div class="painel-form">
+                <p class="painel-form-titulo">Dados fiscais</p>
+                <p style="color:#6b7280; font-size:13px; margin-top:-6px;">Necessários para emitir Nota Fiscal (NF-e/NFC-e) com este produto.</p>
+                <div class="grid-campos">
+                  <label class="campo">NCM *
+                    <input type="text" name="ncm" maxlength="8" placeholder="Ex: 85171231" />
+                  </label>
+                  <label class="campo">CEST
+                    <input type="text" name="cest" maxlength="9" placeholder="Opcional" />
+                  </label>
+                  <label class="campo">CFOP padrão
+                    <input type="text" name="cfop_padrao" maxlength="4" placeholder="Auto (5102/6102) se vazio" />
+                  </label>
+                  <label class="campo">Origem da mercadoria
+                    <select name="origem_mercadoria">
+                      <option value="0">0 - Nacional</option>
+                      <option value="1">1 - Estrangeira (importação direta)</option>
+                      <option value="2">2 - Estrangeira (adquirida no mercado interno)</option>
+                      <option value="3">3 - Nacional (conteúdo importado 40-70%)</option>
+                      <option value="4">4 - Nacional (produção conforme processos básicos)</option>
+                      <option value="5">5 - Nacional (conteúdo importado até 40%)</option>
+                      <option value="6">6 - Estrangeira (importação direta, sem similar nacional)</option>
+                      <option value="7">7 - Estrangeira (mercado interno, sem similar nacional)</option>
+                      <option value="8">8 - Nacional (conteúdo importado acima de 70%)</option>
+                    </select>
+                  </label>
+                  <label class="campo">CST/CSOSN do ICMS
+                    <input type="text" name="icms_situacao_tributaria" maxlength="4" placeholder="Auto conforme regime se vazio" />
+                  </label>
+                  <label class="campo">CST do PIS
+                    <input type="text" name="pis_situacao_tributaria" maxlength="4" value="07" />
+                  </label>
+                  <label class="campo">CST do COFINS
+                    <input type="text" name="cofins_situacao_tributaria" maxlength="4" value="07" />
+                  </label>
+                </div>
               </div>
             </div>
 
